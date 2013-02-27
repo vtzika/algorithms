@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import main.nl.marktplaats.algorithm.ExtendQuery;
+import main.nl.marktplaats.objects.PseudoL1Extention;
+import main.nl.marktplaats.objects.PseudoL2Extention;
 import main.nl.marktplaats.objects.analyticsL1Extention;
 import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
@@ -27,10 +29,14 @@ public class Main {
 	}	
 	
 	public static void main(String[] args) {
-		Configuration configuaration = createConfiguration();
-		aob(configuaration);
+		Configuration configuration = createConfiguration();
+		llr(configuration);
 
 	}
+	private static void llr(Configuration configuration) {
+		
+	}
+
 	private static void aob(Configuration configuration) {
 		try{
 			configuration.getReadTable();
@@ -40,7 +46,6 @@ public class Main {
 			{	
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());
 				newQuery.saveResults(configuration);
-
 			}
 			}
 		catch (Exception e) {

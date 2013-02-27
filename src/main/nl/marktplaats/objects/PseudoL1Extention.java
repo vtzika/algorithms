@@ -1,10 +1,8 @@
-package main.nl.marktplaats;
+package main.nl.marktplaats.objects;
 
 import java.util.List;
 
 import main.nl.marktplaats.algorithm.ExtendQuery;
-import main.nl.marktplaats.objects.PseudoRelevanceFeedback;
-import main.nl.marktplaats.objects.Query;
 import main.nl.marktplaats.utils.SqlCommands;
 
 public class PseudoL1Extention extends ExtendQuery {

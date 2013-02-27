@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import main.nl.marktplaats.utils.HashMapsManipulations;
 import main.nl.marktplaats.utils.SqlCommands;
 import main.nl.marktplaats.utils.StringManipulation;
 
@@ -20,9 +21,8 @@ public class PseudoRelevanceFeedback {
 		SqlCommands sql = new SqlCommands();
 		String newExtQuery = "";
 		for(int id:cat_ids)
-		{	HashMap<Long,Double>  adWithCTR = new HashMap<Long,Double>();
-			adWithCTR = sql.selectHashMapLongDoubbleQuery("select ad_id,CTR from allL2AndCTR where l2="+id,"cas_ad_service");
-			List<Long> maxCTRAds = getMaxCTRFromAds(adWithCTR);
+		{	HashMapsManipulations hashMan = new HashMapsManipulations() ;
+			List<Long> maxCTRAds = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select ad_id,CTR from allL2AndCTR where l2="+id,"cas_ad_service"));
 			sql.insertQuery("insert into topCTRL2 values ("+id+","+maxCTRAds.get(1)+","+maxCTRAds.get(2)+","+maxCTRAds.get(3)+","+maxCTRAds.get(4)+","+maxCTRAds.get(5)+");","");
 			String newQuery = calculateNewQueryFromFrequencies(maxCTRAds);
 			sql.insertQuery("insert into extendedQueriesInL1Browse values ("+id+",'"+newQuery+"');","");
@@ -100,34 +100,6 @@ public class PseudoRelevanceFeedback {
 			return returned;
 	}
 
-	private List<Long> getMaxCTRFromAds(HashMap<Long, Double> adWithCTR) {
-		List<Long> returned = new ArrayList<Long>();
-		TreeMap<Long, Double> sorted_map = new TreeMap();
-		for (Map.Entry<Long, Double> pair : adWithCTR.entrySet()) {
-			if(!pair.getValue().isNaN())
-			{
-				sorted_map.put(pair.getKey(), pair.getValue());
-			}
-		}
-		for (int i = 0; i <= 5; i++) {
-			if(sorted_map.size()>0)
-			{
-				double max = sorted_map.firstEntry().getValue();
-				Long maxKey = sorted_map.firstEntry().getKey();
-				for (Long key : sorted_map.keySet()) {
-					if (sorted_map.get(key) > max) {
-							max = sorted_map.get(key);
-							maxKey = key;
-						}
-
-				}
-				System.out.println(maxKey);
-				returned.add(maxKey);
-				sorted_map.remove(maxKey);
-			}
-			}
-			return returned;
-	}
 
 	public void createParameterFelesL2(List<Integer> cat_ids) throws Exception {
 		for(int cat:cat_ids)

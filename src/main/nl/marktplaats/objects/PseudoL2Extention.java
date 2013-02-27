@@ -1,11 +1,9 @@
-package main.nl.marktplaats;
+package main.nl.marktplaats.objects;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import main.nl.marktplaats.algorithm.ExtendQuery;
-import main.nl.marktplaats.objects.PseudoRelevanceFeedback;
-import main.nl.marktplaats.objects.Query;
 
 public class PseudoL2Extention extends ExtendQuery {
 
