@@ -1,4 +1,5 @@
 package main.nl.marktplaats.algorithm;
+//TO DO:Needs Cleaning
 
 import java.util.ArrayList;
 import java.util.Collections;
