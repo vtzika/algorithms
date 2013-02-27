@@ -1,4 +1,4 @@
-package main.nl.marktplaats.objects;
+package main.nl.marktplaats.algorithm;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +12,7 @@ import javax.management.Query;
 
 import lemurproject.indri.IndexEnvironment;
 import lemurproject.indri.QueryEnvironment;
+import main.nl.marktplaats.objects.Classified;
 import main.nl.marktplaats.utils.HashMapsManipulations;
 
 

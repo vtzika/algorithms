@@ -1,16 +1,12 @@
 package main.nl.marktplaats.objects;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 
-import main.nl.marktplaats.configuration;
 import main.nl.marktplaats.utils.*;
 
 import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.algorithm.ExtendQuery;
+import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
 
 public class LLRDisciminativeTermsL2 extends ExtendQuery {
 

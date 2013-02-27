@@ -5,6 +5,7 @@ public class Configuration {
 	private String db;
 	private String readTable;
 	private String inputTable;
+	private String system;
 	private AobMethod aobMethod;
 	private SearchEngine searchEngine;
 	
@@ -38,7 +39,16 @@ public class Configuration {
 	}
 	public void setSearchEngine(SearchEngine se) {
 		this.searchEngine = se;
-		
+	}
+	public SearchEngine getSearchEngine()
+	{
+		return this.searchEngine;
+	}
+	public String getSystem() {
+		return this.system;
+	}
+	public void setSystem(String s) {
+		this.system = s;
 	}
 
 }
