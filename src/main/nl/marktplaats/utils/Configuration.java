@@ -11,6 +11,7 @@ public class Configuration {
 	private AobMethod aobMethod;
 	private SearchEngine searchEngine;
 	private QueryEnvironment queryEnvRepository;
+	private String repositoryPath;
 	
 	public void setDB(String database) {
 		
@@ -60,6 +61,10 @@ public class Configuration {
 		QueryEnvironmentManipulation envMan = new QueryEnvironmentManipulation();
 		QueryEnvironment env = envMan.add(rep);
 		this.queryEnvRepository = env;
+		this.repositoryPath = rep;
+	}
+	public String getRepositoryPath() {
+		return this.repositoryPath;
 	}
 
 }

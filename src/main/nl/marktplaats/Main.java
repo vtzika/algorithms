@@ -33,8 +33,8 @@ public class Main {
 		configuration.setReadTable("l2Queries");
 		configuration.setInputTable("l2ExtQueries");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setAobMethod(AobMethod.llrL1);
-		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesEntireDoc/");
+		configuration.setAobMethod(AobMethod.llrL2);
+		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		return configuration;
 	}	
 	
@@ -59,7 +59,7 @@ public class Main {
 	private static void aob(Configuration configuration) throws Exception {
 			configuration.getReadTable();
 			SqlCommands sql = new SqlCommands();
-			HashMap<Long,String> queries = sql.selectHashMapQuery("select l2,query from "+configuration.getReadTable()+";",configuration.getDb());
+			HashMap<Long,String> queries = sql.selectHashMapQuery("select id,query from "+configuration.getReadTable()+";",configuration.getDb());
 			for(Entry<Long, String> query: queries.entrySet())
 			{	
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());

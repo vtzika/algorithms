@@ -14,7 +14,6 @@ public class QueryEnvironmentManipulation {
 			env.addIndex(path + rep);
 		}
 		return env;
-		
 	}
 
 }

@@ -26,7 +26,6 @@ public class LLRDisciminativeTermsL1 extends ExtendQuery {
 			LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
 			String results = llr.calculateLLRDocsList(docs, super.getConfiguration().getQueryEnvRepository());
 			return new Query(super.getQuery().getQID(),results);
-			//sql.insertQuery("insert into llrPseudoL1 values (3,\""+super.getQuery().getQString()+"\",\""+ results+"\");","");
 			}
 
 

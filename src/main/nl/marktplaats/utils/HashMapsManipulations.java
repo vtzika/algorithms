@@ -52,11 +52,12 @@ public class HashMapsManipulations {
 	public HashMap<String, Integer> gatherTermsAndFrequencies(List<Long> docs) {
 		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
 		for(Long doc:docs)
-		{
+		{	
 				SqlCommands sql = new SqlCommands();
 				String text = sql.selectStringQuery("select title,description from ads where id="+doc+";","cas_ads");
-				StringManipulation stringManipulation = new StringManipulation();
-				text = stringManipulation.sanitizeString(text);
+				//StringManipulation stringManipulation = new StringManipulation();
+				//text = stringManipulation.sanitizeString(text);
+				
 				for(String t:text.split(" "))
 				{
 					String term = t.toLowerCase();
@@ -64,7 +65,6 @@ public class HashMapsManipulations {
 					{
 						int freq = term_freq.get(term)+1;
 						term_freq.put(term, freq);
-						System.out.println();
 					}
 					else
 						term_freq.put(term, 1);	

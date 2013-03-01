@@ -19,8 +19,6 @@ public class LogLikelihoodRatioCalculator {
 
 	public Float LLRCalculate(String term, HashMap<String, Integer> termsFreq,
 			QueryEnvironment env) throws Exception {
-		
-
 		long a = termsFreq.get(term);
 		long b = env.termCount(term);
 		long c = getCorporaSumOfFreq(termsFreq) - a;
@@ -52,9 +50,7 @@ public class LogLikelihoodRatioCalculator {
 	// orderLLR(wordsLLR1);
 
 	public String orderLLR(Map<String, Float> wordsLLR1) {
-		System.out.println("size : "+wordsLLR1.size());
 		String returned = "";
-		System.out.println("NEW QUERY");
 		TreeMap<String, Float> sorted_map = new TreeMap();
 		for (Map.Entry<String, Float> pair : wordsLLR1.entrySet()) {
 			if(!pair.getValue().isNaN())
