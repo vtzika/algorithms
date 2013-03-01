@@ -1,6 +1,7 @@
 package main.nl.marktplaats.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class StringManipulation {
@@ -248,5 +249,10 @@ public class StringManipulation {
 				sql.insertQuery("insert into resultsForEvaluationTon VALUES (" + i
 						+ ", " + result + ");", db);
 		}
+	}
+
+	public HashMap<String, String> extractDocAndScoreFromString(String intValue) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

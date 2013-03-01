@@ -9,8 +9,6 @@ public Term(String t, QueryEnvironment env) throws Exception {
 		this.term = t;
 		
 		weight = new Weight(t,env);
-		//System.out.println(this.term);
-		//System.out.println(this.weight.calculteWeight(env));
 }
 
 

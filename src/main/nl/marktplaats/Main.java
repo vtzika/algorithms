@@ -41,7 +41,6 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
-		aob(configuration);
 
 	}
 	private static void llr(Configuration configuration) throws Exception {

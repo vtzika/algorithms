@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileNegotiations {
 
@@ -109,5 +111,12 @@ public class FileNegotiations {
 		}
 
 	}
+
+	public List<String> getListFiles(String folder) {
+		List<String> files = new ArrayList<String>();
+		return files;
+	}
+
+
 
 }
