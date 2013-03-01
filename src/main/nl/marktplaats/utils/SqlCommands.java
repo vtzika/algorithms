@@ -48,7 +48,6 @@ public boolean checkIfhasValue(String query, String db) {
 }
 
 public Long selectQuery(String query, String db) {
-	//System.out.println(query);
 	Long result = (long)0;
 	try {
 		ResultSet rs = null;
@@ -69,7 +68,6 @@ public Long selectQuery(String query, String db) {
 	return result;
 }
 public String selectCatQuery(String query, String db) {
-	//System.out.println(query);
 	String result = "";
 	try {
 		ResultSet rs = null;
@@ -91,7 +89,6 @@ public String selectCatQuery(String query, String db) {
 }
 
 public String selectStringQuery(String query, String db) {
-	//System.out.println(query);
 		String result = "";
 		try {
 			ResultSet rs = null;
@@ -102,7 +99,7 @@ public String selectStringQuery(String query, String db) {
 			Statement statement = connection.createStatement();
 			rs = statement.executeQuery(query);
 			while (rs.next()) {
-				result=rs.getString(1) +" "+rs.getString(2) +" " +rs.getString(3)  +" "+rs.getString(4)+ " ";
+				result=rs.getString(1) +" "+rs.getString(2) + " ";
 			}
 			statement.close();
 			connection.close();
@@ -186,8 +183,6 @@ public List<Integer> selectListInt(String query,String db) {
 		rs = statement.executeQuery(query);
 		while (rs.next()) {
 			results.add(rs.getInt(1));
-		
-		//System.out.println(query);
 		}
 		statement.close();
 		connection.close();
@@ -210,8 +205,6 @@ public List<Long> selectListLong(String query,String db) {
 		rs = statement.executeQuery(query);
 		while (rs.next()) {
 			results.add(rs.getLong(1));
-		
-		//System.out.println(query);
 		}
 		statement.close();
 		connection.close();

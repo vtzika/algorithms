@@ -11,7 +11,6 @@ public class QueryEnvironmentManipulation {
 		File repository=new File(path);
 		for( String rep:repository.list())
 		{
-			System.out.println(path+rep);
 			env.addIndex(path + rep);
 		}
 		return env;

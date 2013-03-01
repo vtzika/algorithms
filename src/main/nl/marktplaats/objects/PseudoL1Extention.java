@@ -3,12 +3,13 @@ package main.nl.marktplaats.objects;
 import java.util.List;
 
 import main.nl.marktplaats.algorithm.ExtendQuery;
+import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.SqlCommands;
 
 public class PseudoL1Extention extends ExtendQuery {
 
-	public PseudoL1Extention(Long id, String qString) {
-		super.setQueries(id, qString);
+	public PseudoL1Extention(Long id, String qString, Configuration c) {
+		super.setQueries(id, qString, c);
 	}
 
 	@Override

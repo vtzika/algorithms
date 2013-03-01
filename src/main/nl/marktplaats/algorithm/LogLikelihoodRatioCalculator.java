@@ -14,7 +14,7 @@ import main.nl.marktplaats.utils.HashMapsManipulations;
 public class LogLikelihoodRatioCalculator {
 
 	public LogLikelihoodRatioCalculator() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Float LLRCalculate(String term, HashMap<String, Integer> termsFreq,
@@ -104,15 +104,21 @@ public class LogLikelihoodRatioCalculator {
 	
 	
 	
-	public String calculateLLRDocsList(List<Long> docs,QueryEnvironment env) throws Exception {
+	public String calculateLLRDocsList(List<Long> docs,QueryEnvironment env) {
 		HashMapsManipulations hashMan = new HashMapsManipulations();
-		HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequencies(docs);
-		HashMap<String,Float> llrResults = new HashMap<String, Float>();
-		for (Entry<String,Integer> term_freq:termsFreq.entrySet())
-		{
-			llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
+		try{
+			HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequencies(docs);
+			HashMap<String,Float> llrResults = new HashMap<String, Float>();
+			for (Entry<String,Integer> term_freq:termsFreq.entrySet())
+			{
+				llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
+			}
+			return hashMan.orderLLR(llrResults);
 		}
-		return hashMan.orderLLR(llrResults);
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return null;
 	}
 
 	public main.nl.marktplaats.objects.Query extendQuery() throws Exception {

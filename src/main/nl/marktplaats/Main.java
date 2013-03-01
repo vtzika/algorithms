@@ -30,17 +30,17 @@ public class Main {
 	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
 		configuration.setDB("tests");
-		configuration.setReadTable("queries");
-		configuration.setInputTable("");
+		configuration.setReadTable("l2Queries");
+		configuration.setInputTable("l2ExtQueries");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setAobMethod(AobMethod.AnalyticsL1);
+		configuration.setAobMethod(AobMethod.llrL1);
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesEntireDoc/");
 		return configuration;
 	}	
 	
 	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
-		llr(configuration);
+		aob(configuration);
 
 	}
 	private static void llr(Configuration configuration) throws Exception {
@@ -51,13 +51,12 @@ public class Main {
 		{
 			String results = llr.calculateLLRForDoc(docQuery, configuration.getQueryEnvRepository());
 			System.out.println("QUERY:"+docQuery.getValue()+" \n NEW QUERY: "+results);
-			System.out.println("What Do you want to with the new Queries?");
-			sql.insertQuery("insert into llrQueries values("+docQuery.getKey()+",'"+results+"')", configuration.getDb());
+			//sql.insertQuery("insert into llrQueries values("+docQuery.getKey()+",'"+results+"')", configuration.getDb());
 		}
+		System.out.println("What Do you want to with the new Queries?");
 	}
 
-	private static void aob(Configuration configuration) {
-		try{
+	private static void aob(Configuration configuration) throws Exception {
 			configuration.getReadTable();
 			SqlCommands sql = new SqlCommands();
 			HashMap<Long,String> queries = sql.selectHashMapQuery("select l2,query from "+configuration.getReadTable()+";",configuration.getDb());
@@ -66,10 +65,6 @@ public class Main {
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());
 				newQuery.saveResults(configuration);
 			}
-			}
-		catch (Exception e) {
-			System.out.println(e);
-		}
 	}
 
 	private static ExtendQuery getExtendQueryType(Configuration configuration, Long id, String qString) throws Exception {
@@ -81,22 +76,22 @@ public class Main {
 		}
 		switch (configuration.getAobMethod()) {
 		case AnalyticsL1:
-			newQuery = new analyticsL1Extention(id, qString);				
+			newQuery = new analyticsL1Extention(id, qString, configuration);				
 			break;
 		case AnalyticsL2:
-			newQuery = new analyticsL2Extention(id, qString);
+			newQuery = new analyticsL2Extention(id, qString, configuration);
 			break;
 		case PseudoL1:
-			newQuery = new PseudoL1Extention(id, qString);
+			newQuery = new PseudoL1Extention(id, qString, configuration);
 			break;
 		case PseudoL2:
-			newQuery = new PseudoL2Extention(id, qString);
+			newQuery = new PseudoL2Extention(id, qString, configuration);
 			break;
 		case llrL1:
-			newQuery = new LLRDisciminativeTermsL1(id, qString);
+			newQuery = new LLRDisciminativeTermsL1(id, qString, configuration);
 			break;
 		case llrL2:
-			newQuery = new LLRDisciminativeTermsL2(id, qString);
+			newQuery = new LLRDisciminativeTermsL2(id, qString, configuration);
 			break;
 		default:
 			newQuery = new ExtendQuery() {};

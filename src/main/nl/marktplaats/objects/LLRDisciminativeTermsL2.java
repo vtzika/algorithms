@@ -10,8 +10,8 @@ import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
 
 public class LLRDisciminativeTermsL2 extends ExtendQuery {
 
-	public LLRDisciminativeTermsL2(Long id, String qString) {
-		super.setQueries(id, qString);
+	public LLRDisciminativeTermsL2(Long id, String qString, Configuration configuration) {
+		super.setQueries(id, qString, configuration);
 	}
 
 	@Override

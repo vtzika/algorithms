@@ -20,7 +20,7 @@ public class HashMapsManipulations {
 				sorted_map.put(pair.getKey(), pair.getValue());
 			}
 		}
-		for (int i = 0; i <= 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			if(sorted_map.size()>0)
 			{
 				double max = sorted_map.firstEntry().getValue();
@@ -30,9 +30,7 @@ public class HashMapsManipulations {
 							max = sorted_map.get(key);
 							maxKey = key;
 						}
-
 				}
-				System.out.println(maxKey);
 				returned.add(maxKey);
 				sorted_map.remove(maxKey);
 			}
@@ -54,26 +52,23 @@ public class HashMapsManipulations {
 	public HashMap<String, Integer> gatherTermsAndFrequencies(List<Long> docs) {
 		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
 		for(Long doc:docs)
-			try {
+		{
+				SqlCommands sql = new SqlCommands();
+				String text = sql.selectStringQuery("select title,description from ads where id="+doc+";","cas_ads");
+				StringManipulation stringManipulation = new StringManipulation();
+				text = stringManipulation.sanitizeString(text);
+				for(String t:text.split(" "))
 				{
-					SqlCommands sql = new SqlCommands();
-					String text = sql.selectStringQuery("select title,description from ads where id="+doc+";","cas_ad_service");
-					StringManipulation stringManipulation = new StringManipulation();
-					text = stringManipulation.sanitizeString(text);
-					for(String t:text.split(" "))
+					String term = t.toLowerCase();
+					if(term_freq.containsKey(term))
 					{
-						String term = t.toLowerCase();
-						if(term_freq.containsKey(term))
-						{
-							int freq = term_freq.get(term)+1;
-							term_freq.put(term, freq);				
-						}
-						else
-							term_freq.put(term, 1);	
+						int freq = term_freq.get(term)+1;
+						term_freq.put(term, freq);
+						System.out.println();
 					}
+					else
+						term_freq.put(term, 1);	
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		return term_freq;
 	}
@@ -81,9 +76,7 @@ public class HashMapsManipulations {
 	
 
 	public String orderLLR(Map<String, Float> wordsLLR1) {
-		System.out.println("size : "+wordsLLR1.size());
 		String returned = "";
-		System.out.println("NEW QUERY");
 		TreeMap<String, Float> sorted_map = new TreeMap();
 		for (Map.Entry<String, Float> pair : wordsLLR1.entrySet()) {
 			if(!pair.getValue().isNaN())
