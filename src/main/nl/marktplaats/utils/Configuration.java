@@ -1,5 +1,7 @@
 package main.nl.marktplaats.utils;
 
+import lemurproject.indri.QueryEnvironment;
+
 
 public class Configuration {
 	private String db;
@@ -8,6 +10,7 @@ public class Configuration {
 	private String system;
 	private AobMethod aobMethod;
 	private SearchEngine searchEngine;
+	private QueryEnvironment queryEnvRepository;
 	
 	public void setDB(String database) {
 		
@@ -49,6 +52,14 @@ public class Configuration {
 	}
 	public void setSystem(String s) {
 		this.system = s;
+	}
+	public QueryEnvironment getQueryEnvRepository() {
+		return queryEnvRepository;
+	}
+	public void setQueryEnvRepository(String rep) throws Exception {
+		QueryEnvironmentManipulation envMan = new QueryEnvironmentManipulation();
+		QueryEnvironment env = envMan.add(rep);
+		this.queryEnvRepository = env;
 	}
 
 }

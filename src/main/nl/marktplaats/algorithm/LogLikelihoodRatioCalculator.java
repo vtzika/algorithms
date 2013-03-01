@@ -4,13 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.TreeMap;
 
-import javax.management.Query;
-
-
-import lemurproject.indri.IndexEnvironment;
 import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.objects.Classified;
 import main.nl.marktplaats.utils.HashMapsManipulations;
@@ -18,30 +13,24 @@ import main.nl.marktplaats.utils.HashMapsManipulations;
 
 public class LogLikelihoodRatioCalculator {
 
-	private Classified classified1;
-
-	public LogLikelihoodRatioCalculator(Classified c1) {
-		this.classified1 = c1;
-	}
-
 	public LogLikelihoodRatioCalculator() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Float LLRCalculate(String term, HashMap<String, Long> corpora,
+	public Float LLRCalculate(String term, HashMap<String, Integer> termsFreq,
 			QueryEnvironment env) throws Exception {
 		
 
-		Long a = corpora.get(term);
+		long a = termsFreq.get(term);
 		long b = env.termCount(term);
-		long c = getCorporaSumOfFreq(corpora) - a;
+		long c = getCorporaSumOfFreq(termsFreq) - a;
 		long d = env.termCount() - c;
 		return calculateLLR(a, b, c, d);
 	}
 
-	private long getCorporaSumOfFreq(HashMap<String, Long> corpora) {
+	private long getCorporaSumOfFreq(HashMap<String, Integer> corpora) {
 		long totalFreq = 0;
-		for (Entry<String, Long> entry : corpora.entrySet()) {
+		for (Entry<String, Integer> entry : corpora.entrySet()) {
 			totalFreq = totalFreq + entry.getValue();
 		}
 		return totalFreq;
@@ -115,11 +104,27 @@ public class LogLikelihoodRatioCalculator {
 	
 	
 	
-	public String calculateLLR(List<Long> docs,QueryEnvironment env) throws Exception {
+	public String calculateLLRDocsList(List<Long> docs,QueryEnvironment env) throws Exception {
 		HashMapsManipulations hashMan = new HashMapsManipulations();
-		HashMap<String,Long> termsFreq = hashMan.gatherTermsAndFrequencies(docs);
+		HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequencies(docs);
 		HashMap<String,Float> llrResults = new HashMap<String, Float>();
-		for (Entry<String,Long> term_freq:termsFreq.entrySet())
+		for (Entry<String,Integer> term_freq:termsFreq.entrySet())
+		{
+			llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
+		}
+		return hashMan.orderLLR(llrResults);
+	}
+
+	public main.nl.marktplaats.objects.Query extendQuery() throws Exception {
+		return null;
+	}
+
+	public String calculateLLRForDoc(Entry<Long, String> docQuery,
+			QueryEnvironment env) throws Exception {
+		HashMapsManipulations hashMan = new HashMapsManipulations();
+		HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequenciesByString(docQuery.getValue());
+		HashMap<String,Float> llrResults = new HashMap<String, Float>();
+		for (Entry<String,Integer> term_freq:termsFreq.entrySet())
 		{
 			llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
 		}

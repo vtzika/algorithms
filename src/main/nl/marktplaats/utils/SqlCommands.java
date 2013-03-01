@@ -365,7 +365,6 @@ public HashMap<Long, String> selectHashMapLongStringQuery(String query,
 		String db) {
 	HashMap<Long,String> vipsQueries =new HashMap<Long,String>();
 	try {
-		System.out.println(query);
 		ResultSet rs = null;
 		String connectionURL = "jdbc:mysql://localhost:3306/"+db;
 		Class.forName("com.mysql.jdbc.Driver").newInstance();

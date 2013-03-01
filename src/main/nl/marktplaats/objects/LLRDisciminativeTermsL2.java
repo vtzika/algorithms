@@ -10,6 +10,10 @@ import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
 
 public class LLRDisciminativeTermsL2 extends ExtendQuery {
 
+	public LLRDisciminativeTermsL2(Long id, String qString) {
+		super.setQueries(id, qString);
+	}
+
 	@Override
 	public Query extendQuery() throws Exception{
 		
@@ -24,7 +28,7 @@ public class LLRDisciminativeTermsL2 extends ExtendQuery {
 		HashMapsManipulations hashMan = new HashMapsManipulations() ;
 		List<Long> docs = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select ad_id,CTR from allL2AndCTR where l2="+super.getQuery().getQID(),"cas_ad_service"));
 		LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
-		String results = llr.calculateLLR(docs, env);
+		String results = llr.calculateLLRDocsList(docs, env);
 		return new Query(super.getQuery().getQID(),results);
 		//sql.insertQuery("insert into llrPseudoL2 values (3,\""+super.getQuery().getQString()+"\",\""+ results+"\");","");
 		}

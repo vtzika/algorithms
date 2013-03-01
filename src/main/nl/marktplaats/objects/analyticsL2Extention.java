@@ -5,7 +5,6 @@ import main.nl.marktplaats.algorithm.ExtendQuery;
 public class analyticsL2Extention extends ExtendQuery {
 	public analyticsL2Extention(Long id, String qString) {
 		super.setQueries(id, qString);
-		//super.setExtendedQuery(qString);
 	}
 
 	@Override

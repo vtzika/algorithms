@@ -6,6 +6,7 @@
 	<classpathentry kind="lib" path="/home/varvara/workspace/tools/indri-5.4/swig/obj/java/indri.jar" sourcepath="/home/varvara/workspace/tools/indri-5.4/swig/obj/java">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/home/varvara/workspace/tools/indri-5.4/swig/src/java/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/varvara/workspace/tools/indri-5.4/swig/obj/java"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/varvara/workspace/tools/mysql-connector-java-5.1.23/mysql-connector-java-5.1.23-bin.jar"/>

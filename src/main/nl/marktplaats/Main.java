@@ -1,15 +1,23 @@
 package main.nl.marktplaats;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
+import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.algorithm.ExtendQuery;
+import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
+import main.nl.marktplaats.objects.LLRDisciminativeTermsL1;
+import main.nl.marktplaats.objects.LLRDisciminativeTermsL2;
 import main.nl.marktplaats.objects.PseudoL1Extention;
 import main.nl.marktplaats.objects.PseudoL2Extention;
+import main.nl.marktplaats.objects.Query;
 import main.nl.marktplaats.objects.analyticsL1Extention;
 import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
 import main.nl.marktplaats.utils.Configuration;
+import main.nl.marktplaats.utils.HashMapsManipulations;
+import main.nl.marktplaats.utils.QueryEnvironmentManipulation;
 import main.nl.marktplaats.utils.SearchEngine;
 import main.nl.marktplaats.utils.SqlCommands;
 
@@ -17,24 +25,35 @@ public class Main {
 
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	private static Configuration createConfiguration() {
+	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
-		configuration.setDB("aob");
-		configuration.setReadTable("l2AnalyticsQueries");
+		configuration.setDB("tests");
+		configuration.setReadTable("queries");
 		configuration.setInputTable("");
-		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		configuration.setSearchEngine(SearchEngine.Voyager);
+		configuration.setAobMethod(AobMethod.AnalyticsL1);
+		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesEntireDoc/");
 		return configuration;
 	}	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
 		llr(configuration);
 
 	}
-	private static void llr(Configuration configuration) {
-		
+	private static void llr(Configuration configuration) throws Exception {
+		SqlCommands sql = new SqlCommands();
+		HashMap<Long, String> docsQueries = sql.selectHashMapLongStringQuery("select doc,query from queries",configuration.getDb());
+		LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
+		for(Entry<Long,String> docQuery : docsQueries.entrySet())
+		{
+			String results = llr.calculateLLRForDoc(docQuery, configuration.getQueryEnvRepository());
+			System.out.println("QUERY:"+docQuery.getValue()+" \n NEW QUERY: "+results);
+			System.out.println("What Do you want to with the new Queries?");
+			sql.insertQuery("insert into llrQueries values("+docQuery.getKey()+",'"+results+"')", configuration.getDb());
+		}
 	}
 
 	private static void aob(Configuration configuration) {
@@ -72,6 +91,12 @@ public class Main {
 			break;
 		case PseudoL2:
 			newQuery = new PseudoL2Extention(id, qString);
+			break;
+		case llrL1:
+			newQuery = new LLRDisciminativeTermsL1(id, qString);
+			break;
+		case llrL2:
+			newQuery = new LLRDisciminativeTermsL2(id, qString);
 			break;
 		default:
 			newQuery = new ExtendQuery() {};

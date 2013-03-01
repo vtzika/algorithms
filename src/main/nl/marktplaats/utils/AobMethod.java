@@ -1,5 +1,5 @@
 package main.nl.marktplaats.utils;
 
 public enum AobMethod {
-	AnalyticsL1, AnalyticsL2, PseudoL1, PseudoL2
+	AnalyticsL1, AnalyticsL2, PseudoL1, PseudoL2, llrL1, llrL2
 }

@@ -51,8 +51,8 @@ public class HashMapsManipulations {
 	
 	
 	
-	public HashMap<String, Long> gatherTermsAndFrequencies(List<Long> docs) {
-		HashMap<String, Long> term_freq = new HashMap<String, Long>();
+	public HashMap<String, Integer> gatherTermsAndFrequencies(List<Long> docs) {
+		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
 		for(Long doc:docs)
 			try {
 				{
@@ -65,11 +65,11 @@ public class HashMapsManipulations {
 						String term = t.toLowerCase();
 						if(term_freq.containsKey(term))
 						{
-							Long freq = term_freq.get(term)+1;
+							int freq = term_freq.get(term)+1;
 							term_freq.put(term, freq);				
 						}
 						else
-							term_freq.put(term, (long) 1);	
+							term_freq.put(term, 1);	
 					}
 				}
 			} catch (Exception e) {
@@ -129,5 +129,21 @@ public class HashMapsManipulations {
 				.log(b / E2))));
 
 		return LLR;
+	}
+
+	public HashMap<String, Integer> gatherTermsAndFrequenciesByString(String query) {
+	HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
+		for(String t:query.split(" "))
+		{
+			String term = t.toLowerCase();
+			if(term_freq.containsKey(term))
+			{
+				int freq = term_freq.get(term)+1;
+				term_freq.put(term, freq);				
+			}
+			else
+				term_freq.put(term,  1);	
+		}
+		return term_freq;
 	}
 }
