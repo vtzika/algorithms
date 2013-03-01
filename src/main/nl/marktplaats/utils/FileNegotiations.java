@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.List;
 
 public class FileNegotiations {
 
@@ -45,20 +43,20 @@ public class FileNegotiations {
 		}
 	}
 
-	public void getResultsFromTxtAndSaveInDB(String db) {
-		String file = "/home/varvara/workspace/externalSources/Results/Voyager/SearchTopBlock/Unstemmed/EntireIndex/";
+	public void getResultsFromTxtAndSaveInDB(Configuration configuration) {
 		SqlCommands sql = new SqlCommands();
 		try {
-			FileInputStream fstream = new FileInputStream(file);
+			FileInputStream fstream = new FileInputStream(
+					configuration.getReadFile());
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
 				String[] words = strLine.split(" ");
-				sql.insertQuery("insert into voyagerScore VALUES (" + words[0]
-						+ "," + words[2] + "," + words[4] + "," + '0'
-						+ ",'searchInEntire');", db);
-
+				sql.insertQuery("insert into " + configuration.getInputTable()
+						+ " VALUES (" + words[0] + "," + words[2] + ","
+						+ words[4] + "," + '0' + ",'searchInEntire');",
+						configuration.getDb());
 			}
 			in.close();
 		} catch (Exception e) {
@@ -67,44 +65,36 @@ public class FileNegotiations {
 
 	}
 
-	public void getResultsFromCSVAndSaveInDB() {
-		String file = "/home/varvara/Algorithms/ExperimentsNumbers/VipQueries.output.csv";
+	public void getResultsFromCSVAndSaveInDB(Configuration configuration) {
 		try {
-			// Open the file that is the first
-			// command line parameter
-
-			FileInputStream fstream = new FileInputStream(file);
-			// Get the object of DataInputStream
+			FileInputStream fstream = new FileInputStream(
+					configuration.getReadFile());
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
-			// Read File Line By Line
 			while ((strLine = br.readLine()) != null) {
-				System.out.println(strLine);
 				String[] words = strLine.split(",");
 				this.saveCSVResults(words[0], words[1], words[2], words[4],
-						words[3]);
-				// Print the content on the console
+						words[3], configuration);
 			}
-			// Close the input stream
 			in.close();
-		} catch (Exception e) {// Catch exception if any
+		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
-
 	}
 
 	private void saveCSVResults(String string, String string2, String string3,
-			String string4, String string5) {
+			String string4, String string5, Configuration configuration) {
 		try {
-			String connectionURL = "jdbc:mysql://localhost:3306/cas_ad_service";
+			String connectionURL = "jdbc:mysql://localhost:3306/"
+					+ configuration.getDb();
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Connection connection = DriverManager.getConnection(connectionURL,
 					"root", "qwe123");
 			Statement statement = connection.createStatement();
-			String QueryString = "insert into tfIdfTon VALUES ('" + string
-					+ "','" + string2 + "'," + string3 + "," + string4 + ","
-					+ string5 + ");";
+			String QueryString = "insert into " + configuration.getInputTable()
+					+ " VALUES ('" + string + "','" + string2 + "'," + string3
+					+ "," + string4 + "," + string5 + ");";
 			System.out.println(QueryString);
 			int updateQuery = statement.executeUpdate(QueryString);
 			if (updateQuery != 0) {
@@ -120,4 +110,4 @@ public class FileNegotiations {
 
 	}
 
-	}
+}

@@ -35,6 +35,7 @@ public class Main {
 		configuration.setSearchEngine(SearchEngine.Voyager);
 		configuration.setAobMethod(AobMethod.llrL2);
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
+		configuration.setReadFile("");
 		return configuration;
 	}	
 	
