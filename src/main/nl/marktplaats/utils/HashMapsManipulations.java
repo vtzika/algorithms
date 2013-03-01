@@ -104,6 +104,17 @@ public class HashMapsManipulations {
 			}
 			return returned;
 	}
+	
+	
+	private TreeMap<Double,Long> orderHashMap(Map<Long, Double> unorderedHashMap) {
+		TreeMap<Double, Long> sorted_map = new TreeMap<Double,Long>();
+		for (Entry<Long, Double> pair : unorderedHashMap.entrySet()) {
+			sorted_map.put(pair.getValue(),pair.getKey());
+		}
+		return sorted_map;
+
+	}
+
 
 	public int compare(Map.Entry<String, Float> e1, Map.Entry<String, Float> e2) {
 		if (e1.getValue() < e2.getValue()) {

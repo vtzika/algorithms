@@ -376,4 +376,9 @@ public class SqlCommands {
 		return vipsQueries;
 	}
 
+	public List<Double> selectListDouble(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

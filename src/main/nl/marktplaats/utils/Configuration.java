@@ -12,6 +12,7 @@ public class Configuration {
 	private SearchEngine searchEngine;
 	private QueryEnvironment queryEnvRepository;
 	private String repositoryPath;
+	private String VoyagerResultsFile;
 	
 	public void setDB(String database) {
 		
@@ -65,6 +66,12 @@ public class Configuration {
 	}
 	public String getRepositoryPath() {
 		return this.repositoryPath;
+	}
+	public String getVoyagerResultsFile() {
+		return this.VoyagerResultsFile;
+	}
+	public void setVoyagerResultsFile(String results) {
+		 this.VoyagerResultsFile = results;
 	}
 
 }
