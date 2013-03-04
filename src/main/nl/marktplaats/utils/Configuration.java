@@ -133,10 +133,13 @@ public class Configuration {
 	}
 	public boolean checkVoyagerConfiguration() {
 		boolean a = checkIfHasStringValue("DB",this.db);
-		boolean b = checkIfHasStringValue("QueryTable => ReadTable",this.readTable);
-		boolean c = checkIfHasStringValue("Voyager Requests table => voyagerQueriesTable",this.voyagerQueriesTable);
+		boolean b = checkIfHasStringValue("ReadTable",this.readTable);
+		boolean c = checkIfHasStringValue("voyagerQueriesTable",this.voyagerQueriesTable);
 		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
-		if(a && b && c && d)
+		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",this.voyagerResultsFolder);
+		boolean f = checkIfHasStringValue("VoyagerResultsTable ",this.voyagerResultsTable);
+		
+		if(a && b && c && d && e && f)
 			return true;
 		else return false;
 		

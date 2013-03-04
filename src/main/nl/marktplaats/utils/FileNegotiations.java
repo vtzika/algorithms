@@ -124,6 +124,7 @@ public class FileNegotiations {
 		ResultSet rs;
 		String inputtext = "";
 		SqlCommands sql = new SqlCommands();
+		System.out.println(table);
 		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" where system like '"+system+"';",db);
 		//List<Long> queries = sql.selectListLongQuery("select distinct(query) from "+table+" where query<85 and RPM>0;",db);
 
