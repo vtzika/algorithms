@@ -1,9 +1,12 @@
 package main.nl.marktplaats.utils;
 
 import lemurproject.indri.QueryEnvironment;
+import main.nl.marktplaats.Experiment;
+import main.nl.marktplaats.IndexedField;
 
 
 public class Configuration {
+	private String voyagerResultsTable;
 	private String db;
 	private String readTable;
 	private String inputTable;
@@ -14,6 +17,11 @@ public class Configuration {
 	private String repositoryPath;
 	private String readFile;
 	private String inputFile;
+	private Experiment experiment;
+	private String voyagerRequest;
+	private String postFixVoyagerRequest;
+	private IndexedField indexField;
+	private String voyagerResultsFolder;
 	
 	public void setDB(String database) {
 		
@@ -80,6 +88,46 @@ public class Configuration {
 	public void setInputFile(String inputFile) {
 		this.inputFile = inputFile;
 	}
+	public void setExperiment(Experiment exp) {
+		this.experiment = exp;
+	}
 	
-
+	public Experiment getExperiment( ) {
+		return this.experiment;
+	}
+	public void setVoyagerRequest(String request) {
+		this.voyagerRequest = request; 
+	}
+	public String getVoyagerRequest()
+	{
+		return this.voyagerRequest;
+	}
+	
+	public void setPostFixVoyagerRequest(String request) {
+		this.postFixVoyagerRequest = request; 
+	}
+	public String getPostFixVoyagerRequest()
+	{
+		return this.postFixVoyagerRequest;
+	}
+	public void setIndexField(IndexedField index) {
+		this.indexField = index;
+	}
+	public IndexedField getIndexField()
+	{
+		return this.indexField;
+	}
+	public String getVoyagerResultsFolder() {
+		return this.voyagerResultsFolder;
+	}
+	public void setVoyagerResultsFolder(String folder)
+	{
+		this.voyagerResultsFolder = folder;
+	}
+	public String getVoyagerResultsTable() {
+		return this.voyagerResultsTable;
+	}
+	public void setVoyagerResultsTable(String table) {
+		this.voyagerResultsTable = table;
+	}
 }

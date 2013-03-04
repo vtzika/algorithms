@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class FileNegotiations {
 
@@ -116,6 +118,47 @@ public class FileNegotiations {
 		List<String> files = new ArrayList<String>();
 		return files;
 	}
+	
+	public void createInputForTrec(String pathFolder, String db, String system, String table) {
+		String path = pathFolder+system+".txt";
+		ResultSet rs;
+		String inputtext = "";
+		SqlCommands sql = new SqlCommands();
+		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" where system like '"+system+"';",db);
+		//List<Long> queries = sql.selectListLongQuery("select distinct(query) from "+table+" where query<85 and RPM>0;",db);
+
+		for(Long query:queries)
+		{
+		try {
+			int count=0;
+			String connectionURL = "jdbc:mysql://localhost:3306/"+db;
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			Connection connection = DriverManager.getConnection(connectionURL,
+					"root", "qwe123");
+			Statement statement = connection.createStatement(); 
+			String QueryString = "select distinct query,docs,score,sequence from "+table+" where  query="+query+" and  system like '"+system+"' and sequence<100 order by sequence;"; 
+			//String QueryString = "select distinct query,doc,RPM from "+table+" where query="+query+" and RPM>0 order by sequence;"; 
+					//"select query,doc,score,sequence from compTfidf;";
+			
+				
+			
+			//String QueryString = "select distinct query,doc,"+system+" from mapldfAttr where query="+query+" order by "+system+" desc;"; 
+			System.out.println(QueryString);
+			rs = statement.executeQuery(QueryString);
+			while (rs.next()) {
+				inputtext = inputtext + rs.getInt(1) + " Q0 " + rs.getLong(2) + " "+ rs.getInt(4) + " " + rs.getDouble(3)+ " indri\n";
+			}
+			rs.close();
+			statement.close();
+			connection.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		}
+		new FileNegotiations()
+		.createFile(inputtext, new String(path));
+	}
+	
 
 
 

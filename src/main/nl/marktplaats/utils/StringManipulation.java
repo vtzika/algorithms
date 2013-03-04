@@ -255,4 +255,14 @@ public class StringManipulation {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public String getStringSeparatedByCommas(String origQuery) {
+		String[]  terms = origQuery.split(" ");
+		String newQuery = terms[0];
+		for(int i=1; i<terms.length;i++)
+		{
+			newQuery+=","+terms[i];
+		}
+		return newQuery;
+	}
 }

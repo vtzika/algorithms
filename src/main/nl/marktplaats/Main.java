@@ -1,5 +1,6 @@
 package main.nl.marktplaats;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -12,6 +13,7 @@ import main.nl.marktplaats.objects.LLRDisciminativeTermsL2;
 import main.nl.marktplaats.objects.PseudoL1Extention;
 import main.nl.marktplaats.objects.PseudoL2Extention;
 import main.nl.marktplaats.objects.Query;
+import main.nl.marktplaats.objects.Voyager;
 import main.nl.marktplaats.objects.analyticsL1Extention;
 import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
@@ -30,19 +32,58 @@ public class Main {
 	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
 		configuration.setDB("tests");
-		configuration.setReadTable("l2Queries");
-		configuration.setInputTable("l2ExtQueries");
+		configuration.setReadTable("queries");
+		configuration.setInputTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setAobMethod(AobMethod.llrL2);
+		configuration.setExperiment(Experiment.Aob);
+		configuration.setAobMethod(AobMethod.PseudoL2);
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		configuration.setReadFile("");
+		configuration.setIndexField(IndexedField.Title);
+		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
+		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		return configuration;
 	}	
 	
 	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
+		//runExperiment(configuration);
+		voyagerExperiments(configuration);
 
 	}
+	private static void runExperiment(Configuration configuration) throws Exception {
+		Experiment experiment = configuration.getExperiment();
+		switch (experiment) {
+		case Aob:
+			aob(configuration);
+			break;
+		case TopSearch:
+			System.out.println("TopSearch");
+			break;
+		case SimilarItems:
+			aob(configuration);
+			break;
+		case Diversification:
+			System.out.println("Diversification");
+			break;
+		case Synonyms:
+			System.out.println("Synonyms");
+			break;
+		default:
+			break;
+		}
+		
+	}
+
+	private static void voyagerExperiments(Configuration configuration) throws IOException {
+		Voyager voyager = new Voyager(configuration);
+		voyager.createQueryVoyagerQueryLanguage();
+		voyager.runVoyagerQueries();
+		voyager.saveVoyagerResultsToTable();
+		voyager.createInputFiles();
+		
+	}
+
 	private static void llr(Configuration configuration) throws Exception {
 		SqlCommands sql = new SqlCommands();
 		HashMap<Long, String> docsQueries = sql.selectHashMapLongStringQuery("select doc,query from queries",configuration.getDb());
@@ -57,7 +98,6 @@ public class Main {
 	}
 
 	private static void aob(Configuration configuration) throws Exception {
-			configuration.getReadTable();
 			SqlCommands sql = new SqlCommands();
 			HashMap<Long,String> queries = sql.selectHashMapQuery("select id,query from "+configuration.getReadTable()+";",configuration.getDb());
 			for(Entry<Long, String> query: queries.entrySet())
