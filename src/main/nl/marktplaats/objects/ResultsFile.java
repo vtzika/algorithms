@@ -10,5 +10,7 @@ public class ResultsFile {
 		this.filePath = resultsPath;
 		
 	}
+	
+	
 
 }

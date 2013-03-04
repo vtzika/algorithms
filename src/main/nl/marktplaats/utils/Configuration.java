@@ -6,6 +6,7 @@ import main.nl.marktplaats.IndexedField;
 
 
 public class Configuration {
+	private String voyagerQueriesTable;
 	private String voyagerResultsTable;
 	private String db;
 	private String readTable;
@@ -130,4 +131,36 @@ public class Configuration {
 	public void setVoyagerResultsTable(String table) {
 		this.voyagerResultsTable = table;
 	}
+	public boolean checkVoyagerConfiguration() {
+		boolean a = checkIfHasStringValue("DB",this.db);
+		boolean b = checkIfHasStringValue("QueryTable => ReadTable",this.readTable);
+		boolean c = checkIfHasStringValue("Voyager Requests table => voyagerQueriesTable",this.voyagerQueriesTable);
+		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
+		if(a && b && c && d)
+			return true;
+		else return false;
+		
+	}
+	
+	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
+		if(fieldsValue.isEmpty())
+			System.out.println(fieldsName+" needs to be configured");
+		else
+		{
+			System.out.println(fieldsName+" OK");
+			return true;
+		}
+		return false;
+		
+		
+	}
+	public String getVoyagerQueriesTable() {
+		return this.voyagerQueriesTable;
+	}
+	
+	public void setVoyagerQueriesTable(String table)
+	{
+		this.voyagerQueriesTable = table;
+	}
+	
 }

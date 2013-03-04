@@ -34,8 +34,9 @@ public class Main {
 		configuration.setDB("tests");
 		configuration.setReadTable("queries");
 		configuration.setInputTable("voyRequests");
+		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setExperiment(Experiment.Aob);
+		configuration.setExperiment(Experiment.VoyagerScores);
 		configuration.setAobMethod(AobMethod.PseudoL2);
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		configuration.setReadFile("");
@@ -47,8 +48,8 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
-		//runExperiment(configuration);
-		voyagerExperiments(configuration);
+		runExperiment(configuration);
+		//voyagerExperiments(configuration);
 
 	}
 	private static void runExperiment(Configuration configuration) throws Exception {
@@ -68,6 +69,13 @@ public class Main {
 			break;
 		case Synonyms:
 			System.out.println("Synonyms");
+			break;
+		case VoyagerScores:
+			{
+				boolean checkVoy = configuration.checkVoyagerConfiguration();
+				if(checkVoy)
+					voyagerExperiments(configuration);
+			}
 			break;
 		default:
 			break;
