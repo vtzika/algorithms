@@ -3,6 +3,7 @@ package main.nl.marktplaats.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -114,9 +115,11 @@ public class FileNegotiations {
 
 	}
 
-	public List<String> getListFiles(String folder) {
-		List<String> files = new ArrayList<String>();
-		return files;
+	public String[] getListFiles(String folder) {
+		File repository=new File(folder);
+		String[] files=new String[(int) folder.length()];
+		String[] repositories = repository.list();
+		return repositories;
 	}
 	
 	public void createInputForTrec(String pathFolder, String db, String system, String table) {

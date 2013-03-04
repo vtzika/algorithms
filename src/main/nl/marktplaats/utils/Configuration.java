@@ -23,6 +23,7 @@ public class Configuration {
 	private String postFixVoyagerRequest;
 	private IndexedField indexField;
 	private String voyagerResultsFolder;
+	private String trecInputFolder;
 	
 	public void setDB(String database) {
 		
@@ -165,5 +166,11 @@ public class Configuration {
 	{
 		this.voyagerQueriesTable = table;
 	}
-	
+	public String getTrecInputFolder() {
+		return this.trecInputFolder;
+	}
+
+	public void setTrecInputFolder(String f) {
+		this.trecInputFolder= f;
+	}
 }
