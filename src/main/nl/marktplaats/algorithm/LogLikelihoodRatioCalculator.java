@@ -10,11 +10,10 @@ import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.objects.Classified;
 import main.nl.marktplaats.utils.HashMapsManipulations;
 
-
 public class LogLikelihoodRatioCalculator {
 
 	public LogLikelihoodRatioCalculator() {
-		
+
 	}
 
 	public Float LLRCalculate(String term, HashMap<String, Integer> termsFreq,
@@ -53,30 +52,28 @@ public class LogLikelihoodRatioCalculator {
 		String returned = "";
 		TreeMap<String, Float> sorted_map = new TreeMap();
 		for (Map.Entry<String, Float> pair : wordsLLR1.entrySet()) {
-			if(!pair.getValue().isNaN())
-			{
+			if (!pair.getValue().isNaN()) {
 				sorted_map.put(pair.getKey(), pair.getValue());
 			}
 		}
 		for (int i = 1; i <= 10; i++) {
-			if(sorted_map.size()>0)
-			{
+			if (sorted_map.size() > 0) {
 				float max = sorted_map.firstEntry().getValue();
 				String maxKey = sorted_map.firstEntry().getKey();
-				
+
 				for (String key : sorted_map.keySet()) {
 					if (sorted_map.get(key) > max) {
-							max = sorted_map.get(key);
-							maxKey = key;
-						}
+						max = sorted_map.get(key);
+						maxKey = key;
+					}
 
 				}
-				returned+=maxKey+" ";
+				returned += maxKey + " ";
 				sorted_map.remove(maxKey);
 			}
 
-			}
-			return returned;
+		}
+		return returned;
 	}
 
 	public int compare(Map.Entry<String, Float> e1, Map.Entry<String, Float> e2) {
@@ -97,21 +94,20 @@ public class LogLikelihoodRatioCalculator {
 
 		return LLR;
 	}
-	
-	
-	
-	public String calculateLLRDocsList(List<Long> docs,QueryEnvironment env) {
+
+	public String calculateLLRDocsList(List<Long> docs, QueryEnvironment env) {
 		HashMapsManipulations hashMan = new HashMapsManipulations();
-		try{
-			HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequencies(docs);
-			HashMap<String,Float> llrResults = new HashMap<String, Float>();
-			for (Entry<String,Integer> term_freq:termsFreq.entrySet())
-			{
-				llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
+		try {
+			HashMap<String, Integer> termsFreq = hashMan
+					.gatherTermsAndFrequencies(docs);
+			HashMap<String, Float> llrResults = new HashMap<String, Float>();
+			for (Entry<String, Integer> term_freq : termsFreq.entrySet()) {
+				llrResults.put(term_freq.getKey().toString(), this
+						.LLRCalculate(term_freq.getKey().toString(), termsFreq,
+								env));
 			}
 			return hashMan.orderLLR(llrResults);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -124,14 +120,14 @@ public class LogLikelihoodRatioCalculator {
 	public String calculateLLRForDoc(Entry<Long, String> docQuery,
 			QueryEnvironment env) throws Exception {
 		HashMapsManipulations hashMan = new HashMapsManipulations();
-		HashMap<String,Integer> termsFreq = hashMan.gatherTermsAndFrequenciesByString(docQuery.getValue());
-		HashMap<String,Float> llrResults = new HashMap<String, Float>();
-		for (Entry<String,Integer> term_freq:termsFreq.entrySet())
-		{
-			llrResults.put(term_freq.getKey().toString(),this.LLRCalculate(term_freq.getKey().toString(),termsFreq, env));
+		HashMap<String, Integer> termsFreq = hashMan
+				.gatherTermsAndFrequenciesByString(docQuery.getValue());
+		HashMap<String, Float> llrResults = new HashMap<String, Float>();
+		for (Entry<String, Integer> term_freq : termsFreq.entrySet()) {
+			llrResults.put(term_freq.getKey().toString(), this.LLRCalculate(
+					term_freq.getKey().toString(), termsFreq, env));
 		}
 		return hashMan.orderLLR(llrResults);
 	}
-	
 
 }

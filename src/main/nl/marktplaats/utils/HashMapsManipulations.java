@@ -9,40 +9,36 @@ import java.util.Map.Entry;
 
 public class HashMapsManipulations {
 
-	
-	
 	public List<Long> getMaxCTRFromAds(HashMap<Long, Double> adWithCTR) {
 		List<Long> returned = new ArrayList<Long>();
 		TreeMap<Long, Double> sorted_map = new TreeMap();
 		for (Map.Entry<Long, Double> pair : adWithCTR.entrySet()) {
-			if(!pair.getValue().isNaN())
-			{
+			if (!pair.getValue().isNaN()) {
 				sorted_map.put(pair.getKey(), pair.getValue());
 			}
 		}
 		for (int i = 0; i < 5; i++) {
-			if(sorted_map.size()>0)
-			{
+			if (sorted_map.size() > 0) {
 				double max = sorted_map.firstEntry().getValue();
 				Long maxKey = sorted_map.firstEntry().getKey();
 				for (Long key : sorted_map.keySet()) {
 					if (sorted_map.get(key) > max) {
-							max = sorted_map.get(key);
-							maxKey = key;
-						}
+						max = sorted_map.get(key);
+						maxKey = key;
+					}
 				}
-			
-				while(returned.size()<5)
+
+				while (returned.size() < 5)
 					returned.add((long) 0);
 				returned.add(maxKey);
 				sorted_map.remove(maxKey);
 			}
-			}
-			while(returned.size()<5)
+		}
+		while (returned.size() < 5)
 			returned.add((long) 0);
-			return returned;
+		return returned;
 	}
-	
+
 	public long getCorporaSumOfFreq(HashMap<String, Long> corpora) {
 		long totalFreq = 0;
 		for (Entry<String, Long> entry : corpora.entrySet()) {
@@ -50,76 +46,65 @@ public class HashMapsManipulations {
 		}
 		return totalFreq;
 	}
-	
-	
-	
-	
+
 	public HashMap<String, Integer> gatherTermsAndFrequencies(List<Long> docs) {
 		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
-		for(Long doc:docs)
-		{	
-				SqlCommands sql = new SqlCommands();
-				String text = sql.selectStringQuery("select title,description from ads where id="+doc+";","cas_ads");
-				//StringManipulation stringManipulation = new StringManipulation();
-				//text = stringManipulation.sanitizeString(text);
-				
-				for(String t:text.split(" "))
-				{
-					String term = t.toLowerCase();
-					if(term_freq.containsKey(term))
-					{
-						int freq = term_freq.get(term)+1;
-						term_freq.put(term, freq);
-					}
-					else
-						term_freq.put(term, 1);	
-				}
+		for (Long doc : docs) {
+			SqlCommands sql = new SqlCommands();
+			String text = sql.selectStringQuery(
+					"select title,description from ads where id=" + doc + ";",
+					"cas_ads");
+			// StringManipulation stringManipulation = new StringManipulation();
+			// text = stringManipulation.sanitizeString(text);
+
+			for (String t : text.split(" ")) {
+				String term = t.toLowerCase();
+				if (term_freq.containsKey(term)) {
+					int freq = term_freq.get(term) + 1;
+					term_freq.put(term, freq);
+				} else
+					term_freq.put(term, 1);
 			}
+		}
 		return term_freq;
 	}
-	
-	
 
 	public String orderLLR(Map<String, Float> wordsLLR1) {
 		String returned = "";
 		TreeMap<String, Float> sorted_map = new TreeMap();
 		for (Map.Entry<String, Float> pair : wordsLLR1.entrySet()) {
-			if(!pair.getValue().isNaN())
-			{
+			if (!pair.getValue().isNaN()) {
 				sorted_map.put(pair.getKey(), pair.getValue());
 			}
 		}
 		for (int i = 1; i <= 10; i++) {
-			if(sorted_map.size()>0)
-			{
+			if (sorted_map.size() > 0) {
 				float max = sorted_map.firstEntry().getValue();
 				String maxKey = sorted_map.firstEntry().getKey();
-				
+
 				for (String key : sorted_map.keySet()) {
 					if (sorted_map.get(key) > max) {
-							max = sorted_map.get(key);
-							maxKey = key;
-						}
-
+						max = sorted_map.get(key);
+						maxKey = key;
+					}
 				}
-				returned+=maxKey+" ";
+				returned += maxKey + " ";
 				sorted_map.remove(maxKey);
 			}
 
-			}
-			return returned;
+		}
+		return returned;
 	}
-	
-	
-	private TreeMap<Double,Long> orderHashMap(Map<Long, Double> unorderedHashMap) {
-		TreeMap<Double, Long> sorted_map = new TreeMap<Double,Long>();
+
+	private TreeMap<Double, Long> orderHashMap(
+			Map<Long, Double> unorderedHashMap) {
+		TreeMap<Double, Long> sorted_map = new TreeMap<Double, Long>();
 		for (Entry<Long, Double> pair : unorderedHashMap.entrySet()) {
-			sorted_map.put(pair.getValue(),pair.getKey());
+			sorted_map.put(pair.getValue(), pair.getKey());
 		}
 		return sorted_map;
 
 	}
-
 
 	public int compare(Map.Entry<String, Float> e1, Map.Entry<String, Float> e2) {
 		if (e1.getValue() < e2.getValue()) {
@@ -140,18 +125,16 @@ public class HashMapsManipulations {
 		return LLR;
 	}
 
-	public HashMap<String, Integer> gatherTermsAndFrequenciesByString(String query) {
-	HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
-		for(String t:query.split(" "))
-		{
+	public HashMap<String, Integer> gatherTermsAndFrequenciesByString(
+			String query) {
+		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
+		for (String t : query.split(" ")) {
 			String term = t.toLowerCase();
-			if(term_freq.containsKey(term))
-			{
-				int freq = term_freq.get(term)+1;
-				term_freq.put(term, freq);				
-			}
-			else
-				term_freq.put(term,  1);	
+			if (term_freq.containsKey(term)) {
+				int freq = term_freq.get(term) + 1;
+				term_freq.put(term, freq);
+			} else
+				term_freq.put(term, 1);
 		}
 		return term_freq;
 	}

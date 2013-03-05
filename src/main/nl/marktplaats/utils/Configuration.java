@@ -215,4 +215,12 @@ public class Configuration {
 	public void setMmrMethod(MMRMethod method) {
 		this.mmrMethod = method;
 	}
+	public boolean checkSynonymsConfiguration() {
+		// TODO Auto-generated method stub
+		boolean a =  checkIfHasStringValue("DB ", this.db);
+		boolean b = checkIfHasStringValue("ReadTable ", this.readTable);
+		if(a && b)
+			return true;
+		else return false;
+	}
 }

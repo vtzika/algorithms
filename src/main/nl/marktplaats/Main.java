@@ -17,6 +17,7 @@ import main.nl.marktplaats.objects.analyticsL1Extention;
 import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
 import main.nl.marktplaats.utils.Configuration;
+import main.nl.marktplaats.utils.MMRMethod;
 import main.nl.marktplaats.utils.SearchEngine;
 import main.nl.marktplaats.utils.SqlCommands;
 
@@ -44,6 +45,7 @@ public class Main {
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setMMRTable("MMR");
 		configuration.setAobMethod(AobMethod.AnalyticsL1);
+		configuration.setMmrMethod(MMRMethod.altAllMMR);
 		return configuration;
 	}	
 	
@@ -74,16 +76,45 @@ public class Main {
 			break;
 		}
 		case Synonyms:
-			System.out.println("Synonyms");
+			boolean checkSysnonyms = configuration.checkSynonymsConfiguration();
+			if(checkSysnonyms)
+				synonymsExperiment(configuration);
 			break;
 		default:
 			break;
 		}
 		
 	}
+	private static void synonymsExperiment(Configuration configuration) throws Exception {
+		llr(configuration);		
+	}
+
 	private static void diversificationExperiment(Configuration configuration) throws Exception {
 		Diversification diversification = new Diversification(configuration);
-		diversification.diversificationSimple();
+		MMRMethod mmrMethod = configuration.getMmrMethod();
+		switch (mmrMethod) {
+		case simpleMMR:
+			diversification.diversificationSimple();
+			break;
+		case altAllMMR:
+			diversification.alternativeDiversification();
+			break;
+		case altLastOneMMR:
+			diversification.alternativeDiversification2();
+			break;
+		case altLastourMMR:
+			diversification.alternativeDiversificationLast4();
+			break;
+		case altLastFourTenNextMMR:
+			diversification.alternativeDiversificationLast4With10Next();
+			break;
+		case altMMRwithFine:
+			diversification.alternativeDiversificationLast4With10NextAndFine();
+			break;
+		default:
+			break;
+		}
+		diversification.alternativeDiversification();
 	}
 
 	private static void voyagerExperiments(Configuration configuration) throws IOException {

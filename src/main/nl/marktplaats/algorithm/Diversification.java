@@ -65,39 +65,38 @@ public class Diversification {
 
 
 	//This technique check the similarity of one add with all the previous results 
-	public static void alternativeDiversification() throws Exception
+	public void alternativeDiversification() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from altMMR );",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
 		{
 			int count = 0;
-			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where query="+query+" and doc not in (select doc from altMMR where query="+query+") limit 100;",db);
-			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and doc="+ids.get(0)+";",db);
+			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
+			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";",db);
 			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+","+count+");",db);
 			Long alreadyCompared = ids.get(0);
 			ids.remove(0);
 			while(ids.size()>0)
 			{
-					HashMap<Long,Double> mmrs = new HashMap<Long,Double>();
-					for(int j=0;j<=ids.size()-1; j++)
-					{
-					CosineSimilarity cs = new CosineSimilarity(db,ids.get(j), alreadyCompared,query, table, env);
-					double c_s = 0.0;
-					HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc1,similarity from cosSim where doc2="+alreadyCompared+";", db);
-					
-					if(cos_sims.containsKey(ids.get(j)))
-					{
-						cos_sims.put(ids.get(j),cos_sims.get(ids.get(j)));
-						c_s = cos_sims.get(ids.get(j));
-					}
-					else
-					{
-						c_s = cs.calculateCosineSimilarity();
-						cos_sims.put(ids.get(j),c_s);
-						sql.insertQuery("insert into cosSim Values("+query+","+ids.get(j)+","+ alreadyCompared+","+cs.getDoc1().getScore()+","+c_s+");",db);
-						
-						
-					}
+				HashMap<Long,Double> mmrs = new HashMap<Long,Double>();
+				for(int j=0;j<=ids.size()-1; j++)
+				{
+				CosineSimilarity cs = new CosineSimilarity(db,ids.get(j), alreadyCompared,query, table, env);
+				double c_s = 0.0;
+				HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc1,similarity from cosSim where doc2="+alreadyCompared+";", db);
+				
+				if(cos_sims.containsKey(ids.get(j)))
+				{
+					cos_sims.put(ids.get(j),cos_sims.get(ids.get(j)));
+					c_s = cos_sims.get(ids.get(j));
+				}
+				else
+				{
+					c_s = cs.calculateCosineSimilarity();
+					cos_sims.put(ids.get(j),c_s);
+					System.out.println(ids.get(j));
+					sql.insertQuery("insert into cosSim Values("+ids.get(j)+","+ alreadyCompared+","+cs.getDoc1().getScore()+","+c_s+");",db);
+				}
 					Document doc1 = new Document(db,ids.get(j), query, table, env);
 					double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * c_s;
 					mmrs.put(ids.get(j), mmr);
@@ -122,7 +121,7 @@ public class Diversification {
 			}
 	}
 	//This technique check the similarity of one add with all the displayed results 
-	public static void alternativeDiversification2() throws Exception
+	public void alternativeDiversification2() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
 		
@@ -167,7 +166,7 @@ public class Diversification {
 	}
 	
 	//This technique check the similarity of one add with previous 4 displayed results 
-		public static void alternativeDiversificationLast4() throws Exception
+		public void alternativeDiversificationLast4() throws Exception
 		{
 			SqlCommands sql = new SqlCommands();
 			for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from altMMRAvgLast4Lamda05);","aob"))
@@ -220,7 +219,7 @@ public class Diversification {
 
 		
 		//This technique check the similarity of 10 next adds with previous 4 displayed results 
-		public static void alternativeDiversificationLast4With10Next() throws Exception
+		public void alternativeDiversificationLast4With10Next() throws Exception
 		{
 			SqlCommands sql = new SqlCommands();
 			for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from altMMRAvg4Last10Next);","aob"))
