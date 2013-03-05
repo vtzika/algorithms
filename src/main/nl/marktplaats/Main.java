@@ -2,24 +2,21 @@ package main.nl.marktplaats;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
-import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.algorithm.ExtendQuery;
 import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
+import main.nl.marktplaats.objects.Experiment;
+import main.nl.marktplaats.objects.IndexedField;
 import main.nl.marktplaats.objects.LLRDisciminativeTermsL1;
 import main.nl.marktplaats.objects.LLRDisciminativeTermsL2;
 import main.nl.marktplaats.objects.PseudoL1Extention;
 import main.nl.marktplaats.objects.PseudoL2Extention;
-import main.nl.marktplaats.objects.Query;
 import main.nl.marktplaats.objects.Voyager;
 import main.nl.marktplaats.objects.analyticsL1Extention;
 import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
 import main.nl.marktplaats.utils.Configuration;
-import main.nl.marktplaats.utils.HashMapsManipulations;
-import main.nl.marktplaats.utils.QueryEnvironmentManipulation;
 import main.nl.marktplaats.utils.SearchEngine;
 import main.nl.marktplaats.utils.SqlCommands;
 
@@ -41,6 +38,7 @@ public class Main {
 		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
 		configuration.setAobMethod(AobMethod.PseudoL2);
+		configuration.setStatisticsTable("voyStatistics");
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		configuration.setReadFile("");
 		configuration.setIndexField(IndexedField.Title);
@@ -90,7 +88,7 @@ public class Main {
 		voyager.runVoyagerQueries();
 		voyager.saveVoyagerResultsToTable();
 		voyager.createInputFiles();
-		
+		voyager.gatherStatistics();
 	}
 
 	private static void llr(Configuration configuration) throws Exception {

@@ -1,8 +1,8 @@
 package main.nl.marktplaats.utils;
 
 import lemurproject.indri.QueryEnvironment;
-import main.nl.marktplaats.Experiment;
-import main.nl.marktplaats.IndexedField;
+import main.nl.marktplaats.objects.Experiment;
+import main.nl.marktplaats.objects.IndexedField;
 
 
 public class Configuration {
@@ -24,6 +24,7 @@ public class Configuration {
 	private IndexedField indexField;
 	private String voyagerResultsFolder;
 	private String trecInputFolder;
+	private String statisticsTable;
 	
 	public void setDB(String database) {
 		
@@ -133,15 +134,16 @@ public class Configuration {
 		this.voyagerResultsTable = table;
 	}
 	public boolean checkVoyagerConfiguration() {
-		boolean a = checkIfHasStringValue("DB",this.db);
-		boolean b = checkIfHasStringValue("ReadTable",this.readTable);
-		boolean c = checkIfHasStringValue("voyagerQueriesTable",this.voyagerQueriesTable);
+		boolean a = checkIfHasStringValue("DB ",this.db);
+		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
+		boolean c = checkIfHasStringValue("voyagerQueriesTable ",this.voyagerQueriesTable);
 		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
 		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",this.voyagerResultsFolder);
 		boolean f = checkIfHasStringValue("VoyagerResultsTable ",this.voyagerResultsTable);
 		boolean g = checkIfHasStringValue("trecInputFolder ",this.trecInputFolder);
+		boolean h = checkIfHasStringValue("statisticsTable  ",this.statisticsTable);
 		
-		if(a && b && c && d && e && f && g)
+		if(a && b && c && d && e && f && g && h)
 			return true;
 		else return false;
 		
@@ -173,5 +175,12 @@ public class Configuration {
 
 	public void setTrecInputFolder(String f) {
 		this.trecInputFolder= f;
+	}
+	public void setStatisticsTable(String s) {
+		this.statisticsTable = s;
+	}
+	public String getStatisticsTable()
+	{
+		return this.statisticsTable;
 	}
 }
