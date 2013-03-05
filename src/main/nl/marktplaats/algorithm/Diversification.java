@@ -27,7 +27,7 @@ public class Diversification {
 		mmrTable =  configuration.getMMRTable();
 	}
 	
-	public static void diversificationSimple() throws Exception
+	public void diversificationSimple() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
 		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+" );",db))

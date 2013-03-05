@@ -209,4 +209,10 @@ public class Configuration {
 			return true;
 		else return false;
 	}
+	public MMRMethod getMmrMethod() {
+		return mmrMethod;
+	}
+	public void setMmrMethod(MMRMethod method) {
+		this.mmrMethod = method;
+	}
 }

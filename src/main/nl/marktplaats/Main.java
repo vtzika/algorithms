@@ -43,6 +43,7 @@ public class Main {
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setMMRTable("MMR");
+		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		return configuration;
 	}	
 	
@@ -65,12 +66,6 @@ public class Main {
 				voyagerExperiments(configuration);
 		}
 		break;
-		case TopSearch:
-			System.out.println("TopSearch");
-			break;
-		case SimilarItems:
-			System.out.println("Similar Items");
-			break;
 		case Diversification:
 		{
 			boolean checkMMR = configuration.checkMMRConfiguration();
