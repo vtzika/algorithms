@@ -25,6 +25,7 @@ public class Configuration {
 	private String voyagerResultsFolder;
 	private String trecInputFolder;
 	private String statisticsTable;
+	private String inputMMRTable;
 	
 	public void setDB(String database) {
 		
@@ -133,6 +134,15 @@ public class Configuration {
 	public void setVoyagerResultsTable(String table) {
 		this.voyagerResultsTable = table;
 	}	
+	
+	public void setInputMMRTable(String mmrTable)
+	{
+		this.inputMMRTable = mmrTable;
+	}
+	public String getMMRTable()
+	{
+		return this.getMMRTable();
+	}
 	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
 		if(fieldsValue==null)
 			System.out.println(fieldsName+" needs to be configured");
@@ -142,8 +152,6 @@ public class Configuration {
 			return true;
 		}
 		return false;
-		
-		
 	}
 	public String getVoyagerQueriesTable() {
 		return this.voyagerQueriesTable;
@@ -185,10 +193,18 @@ public class Configuration {
 	public boolean checkAobConfiguration() {
 		boolean a = checkIfHasStringValue("DB ",this.db);
 		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
-		boolean c = checkIfHasStringValue("AobMethod", aobMethod.toString());
-		boolean d = checkIfHasStringValue("InputTable ",this.inputTable.toString());
+		boolean d = checkIfHasStringValue("InputTable ",this.inputTable);
 		
-		if(a && b && c && d)
+		if(a && b && d)
+			return true;
+		else return false;
+	}
+	public boolean checkMMRConfiguration() {
+		boolean a = checkIfHasStringValue("DB ",this.db);
+		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
+		boolean d = checkIfHasStringValue("inputMMRTable ",this.inputMMRTable);
+		
+		if(a && b && d)
 			return true;
 		else return false;
 	}

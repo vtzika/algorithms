@@ -33,11 +33,11 @@ public class Main {
 		configuration.setInputTable("voyRequests");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setExperiment(Experiment.Aob);
+		configuration.setExperiment(Experiment.Diversification);
 		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title");
 		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
-		configuration.setAobMethod(AobMethod.PseudoL2);
+		configuration.setAobMethod(AobMethod.PseudoL1);
 		configuration.setStatisticsTable("voyStatistics");
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		configuration.setIndexField(IndexedField.Title);
@@ -54,33 +54,41 @@ public class Main {
 		Experiment experiment = configuration.getExperiment();
 		switch (experiment) {
 		case Aob:
-
 			boolean checkAob = configuration.checkAobConfiguration();
 			if(checkAob)
 				aob(configuration);
 			break;
+		case VoyagerScores:
+		{
+			boolean checkVoy = configuration.checkVoyagerConfiguration();
+			if(checkVoy)
+				voyagerExperiments(configuration);
+		}
+		break;
 		case TopSearch:
 			System.out.println("TopSearch");
 			break;
 		case SimilarItems:
-			aob(configuration);
+			System.out.println("Similar Items");
 			break;
 		case Diversification:
-			System.out.println("Diversification");
+		{
+			boolean checkMMR = configuration.checkMMRConfiguration();
+			if(checkMMR)
+				divertificationExperiment(configuration);
 			break;
+		}
 		case Synonyms:
 			System.out.println("Synonyms");
-			break;
-		case VoyagerScores:
-			{
-				boolean checkVoy = configuration.checkVoyagerConfiguration();
-				if(checkVoy)
-					voyagerExperiments(configuration);
-			}
 			break;
 		default:
 			break;
 		}
+		
+	}
+
+	private static void divertificationExperiment(Configuration configuration) {
+		// TODO Auto-generated method stub
 		
 	}
 
