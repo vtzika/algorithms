@@ -45,7 +45,7 @@ public class Main {
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setMMRTable("MMR");
 		configuration.setAobMethod(AobMethod.AnalyticsL1);
-		configuration.setMmrMethod(MMRMethod.altAllMMR);
+		configuration.setMmrMethod(MMRMethod.simpleMMR);
 		return configuration;
 	}	
 	
@@ -102,7 +102,7 @@ public class Main {
 		case altLastOneMMR:
 			diversification.alternativeDiversification2();
 			break;
-		case altLastourMMR:
+		case altLastFourMMR:
 			diversification.alternativeDiversificationLast4();
 			break;
 		case altLastFourTenNextMMR:
