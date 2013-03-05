@@ -46,7 +46,7 @@ public abstract class ExtendQuery {
 	}
 	public void saveResults(Configuration configuration) throws Exception {
 		SqlCommands sql = new SqlCommands();
-		sql.insertQuery("insert into "+configuration.getInputTable()+" values("+this.getQuery().getQID()+",'"+this.getExtendedQuery().getQString()+"');", configuration.getDb());
+		sql.insertQuery("insert into "+configuration.getInputTable()+" values("+this.getQuery().getQID()+",'"+this.getExtendedQuery().getQString()+"','');", configuration.getDb());
 	}
 	public Configuration getConfiguration() {
 		return this.configuration;

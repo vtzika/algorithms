@@ -5,6 +5,7 @@ import java.util.List;
 
 import main.nl.marktplaats.algorithm.ExtendQuery;
 import main.nl.marktplaats.utils.Configuration;
+import main.nl.marktplaats.utils.SqlCommands;
 
 public class PseudoL2Extention extends ExtendQuery {
 
@@ -14,10 +15,10 @@ public class PseudoL2Extention extends ExtendQuery {
 
 	@Override
 	public Query extendQuery() throws Exception{
-
 		PseudoRelevanceFeedback pseudo = new PseudoRelevanceFeedback();
 		List<Integer> l2 = new ArrayList<Integer>();
-		l2.add((int) super.getQuery().getQID().longValue());
+		SqlCommands sql = new SqlCommands();
+		l2.add(sql.selectIntQuery("select category_id from ads where id="+(int) super.getQuery().getQID().longValue()+";", "cas_ad_service"));
 		String newQuery = pseudo.findBiggestCTRAndCreateNewQueries(l2);
 		Query query = new Query(super.getQuery().getQID(), newQuery );
 		return query;

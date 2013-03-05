@@ -132,23 +132,7 @@ public class Configuration {
 	}
 	public void setVoyagerResultsTable(String table) {
 		this.voyagerResultsTable = table;
-	}
-	public boolean checkVoyagerConfiguration() {
-		boolean a = checkIfHasStringValue("DB ",this.db);
-		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
-		boolean c = checkIfHasStringValue("voyagerQueriesTable ",this.voyagerQueriesTable);
-		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
-		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",this.voyagerResultsFolder);
-		boolean f = checkIfHasStringValue("VoyagerResultsTable ",this.voyagerResultsTable);
-		boolean g = checkIfHasStringValue("trecInputFolder ",this.trecInputFolder);
-		boolean h = checkIfHasStringValue("statisticsTable  ",this.statisticsTable);
-		
-		if(a && b && c && d && e && f && g && h)
-			return true;
-		else return false;
-		
-	}
-	
+	}	
 	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
 		if(fieldsValue==null)
 			System.out.println(fieldsName+" needs to be configured");
@@ -182,5 +166,30 @@ public class Configuration {
 	public String getStatisticsTable()
 	{
 		return this.statisticsTable;
+	}
+	public boolean checkVoyagerConfiguration() {
+		boolean a = checkIfHasStringValue("DB ",this.db);
+		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
+		boolean c = checkIfHasStringValue("voyagerQueriesTable ",this.voyagerQueriesTable);
+		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
+		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",this.voyagerResultsFolder);
+		boolean f = checkIfHasStringValue("VoyagerResultsTable ",this.voyagerResultsTable);
+		boolean g = checkIfHasStringValue("trecInputFolder ",this.trecInputFolder);
+		boolean h = checkIfHasStringValue("statisticsTable  ",this.statisticsTable);
+		
+		if(a && b && c && d && e && f && g && h)
+			return true;
+		else return false;
+		
+	}
+	public boolean checkAobConfiguration() {
+		boolean a = checkIfHasStringValue("DB ",this.db);
+		boolean b = checkIfHasStringValue("ReadTable ",this.readTable);
+		boolean c = checkIfHasStringValue("AobMethod", aobMethod.toString());
+		boolean d = checkIfHasStringValue("InputTable ",this.inputTable.toString());
+		
+		if(a && b && c && d)
+			return true;
+		else return false;
 	}
 }

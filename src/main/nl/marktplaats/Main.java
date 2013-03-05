@@ -33,14 +33,13 @@ public class Main {
 		configuration.setInputTable("voyRequests");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setExperiment(Experiment.VoyagerScores);
+		configuration.setExperiment(Experiment.Aob);
 		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title");
 		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
 		configuration.setAobMethod(AobMethod.PseudoL2);
 		configuration.setStatisticsTable("voyStatistics");
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
-		configuration.setReadFile("");
 		configuration.setIndexField(IndexedField.Title);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
@@ -55,7 +54,10 @@ public class Main {
 		Experiment experiment = configuration.getExperiment();
 		switch (experiment) {
 		case Aob:
-			aob(configuration);
+
+			boolean checkAob = configuration.checkAobConfiguration();
+			if(checkAob)
+				aob(configuration);
 			break;
 		case TopSearch:
 			System.out.println("TopSearch");
@@ -106,7 +108,7 @@ public class Main {
 
 	private static void aob(Configuration configuration) throws Exception {
 			SqlCommands sql = new SqlCommands();
-			HashMap<Long,String> queries = sql.selectHashMapQuery("select id,query from "+configuration.getReadTable()+";",configuration.getDb());
+			HashMap<Long,String> queries = sql.selectHashMapQuery("select doc,query from "+configuration.getReadTable()+";",configuration.getDb());
 			for(Entry<Long, String> query: queries.entrySet())
 			{	
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());

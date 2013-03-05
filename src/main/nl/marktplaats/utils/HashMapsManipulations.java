@@ -31,10 +31,15 @@ public class HashMapsManipulations {
 							maxKey = key;
 						}
 				}
+			
+				while(returned.size()<5)
+					returned.add((long) 0);
 				returned.add(maxKey);
 				sorted_map.remove(maxKey);
 			}
 			}
+			while(returned.size()<5)
+			returned.add((long) 0);
 			return returned;
 	}
 	
