@@ -136,13 +136,13 @@ public class Configuration {
 		this.voyagerResultsTable = table;
 	}	
 	
-	public void setInputMMRTable(String mmrTable)
+	public void setMMRTable(String mmrTable)
 	{
 		this.inputMMRTable = mmrTable;
 	}
 	public String getMMRTable()
 	{
-		return this.getMMRTable();
+		return this.inputMMRTable;
 	}
 	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
 		if(fieldsValue==null)

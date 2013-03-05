@@ -25,6 +25,8 @@ public class CosineSimilarity {
 		Double sumSquaredWeightDoc2 = doc2.getSumSquaredWeight();
 		Double St1it2i = getSumTermsWeightsForBothDocs();
 		cosSimilarity = St1it2i /(sumSquaredWeightDoc1*sumSquaredWeightDoc2);
+		if(cosSimilarity.isNaN())
+			return 0.0;
 		return cosSimilarity;
 	}
 	private Double getSumTermsWeightsForBothDocs()

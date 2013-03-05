@@ -15,23 +15,25 @@ import main.nl.marktplaats.utils.SqlCommands;
 
 public class Diversification {
 	private static String db ;
-	private static String system; 
 	private static String table;
 	private static QueryEnvironment env ;
+	private static String mmrTable ;
 
 	public Diversification(Configuration configuration ) throws Exception
 	{
 		db = configuration.getDb();
 		table = configuration.getReadTable();
 		env = configuration.getQueryEnvRepository();
+		mmrTable =  configuration.getMMRTable();
 	}
 	
 	public static void diversificationSimple() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from MMR );",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+" );",db))
 		{
-			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where  query="+query+" and doc not in (select doc from MMR where query="+query+") limit 100;",db);
+			int count = 0;
+			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where  query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
 			for(int i=0; i<=ids.size()-2;i++)
 			{
 				HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc2,similarity from cosSim where doc1="+ids.get(i)+";", db);
@@ -47,14 +49,15 @@ public class Diversification {
 					CosineSimilarity cs = new CosineSimilarity(db, ids.get(i), ids.get(j),query, table, env);
 					c_s = cs.calculateCosineSimilarity();
 					cos_sims.put(ids.get(j),c_s);
-					sql.insertQuery("insert into cosSim Values("+query+","+ids.get(i)+","+ ids.get(j)+","+cs.getDoc1().getScore()+","+c_s+");",db);
+					sql.insertQuery("insert into cosSim Values("+ids.get(i)+","+ ids.get(j)+","+cs.getDoc1().getScore()+","+c_s+");",db);
 					
 				}
 				}
 				Document doc1 = new Document(db,ids.get(i), query, table, env);
 				double maxCosineSimilarity = getMaxCs(cos_sims) ;
 				double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * maxCosineSimilarity;
-				sql.insertQuery("insert into MMR Values("+query+","+ids.get(i)+","+mmr+","+system+");",db);
+				count++;
+				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(i)+","+mmr+","+count+");",db);
 				
 			}
 		} 
@@ -65,11 +68,12 @@ public class Diversification {
 	public static void alternativeDiversification() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where system="+system+" and query not in (select distinct(query) from altMMR where system="+system+");",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from altMMR );",db))
 		{
-			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where system="+system+" and query="+query+" and doc not in (select doc from altMMR where system="+system+" and  query="+query+") limit 100;",db);
+			int count = 0;
+			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where query="+query+" and doc not in (select doc from altMMR where query="+query+") limit 100;",db);
 			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and doc="+ids.get(0)+";",db);
-			sql.insertQuery("insert into altMMR Values("+query+","+ids.get(0)+","+score+",1);",db);
+			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+","+count+");",db);
 			Long alreadyCompared = ids.get(0);
 			ids.remove(0);
 			while(ids.size()>0)
@@ -100,7 +104,8 @@ public class Diversification {
 									
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
-					sql.insertQuery("insert into altMMR Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+system+");",db);
+					count++;
+					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+count+");",db);
 					alreadyCompared = maxMMRid;
 					int removableIndex = 0 ;
 					for(int i=0;i<ids.size();i++)
@@ -121,13 +126,13 @@ public class Diversification {
 	{
 		SqlCommands sql = new SqlCommands();
 		
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where system="+system+" and query not in (select distinct(query) from altMMRAvg where system="+system+");",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from altMMRAvg);",db))
 		{
 			int count = 1;
-			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where system="+system+" and query="+query+" and doc not in (select doc from altMMRAvg where system="+system+" and query="+query+") limit 100;",db);
+			List<Long> ids = sql.selectListLong("select distinct(doc) from "+table+" where query="+query+" and doc not in (select doc from altMMRAvg where query="+query+") limit 100;",db);
 			List<Long> displayedIds = new ArrayList<Long>();
 			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and doc="+ids.get(0)+";", db);
-			sql.insertQuery("insert into altMMRAvg Values("+query+","+ids.get(0)+","+score+",1,"+system+");",db);
+			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,"+count+");",db);
 			Long alreadyCompared = ids.get(0);
 			displayedIds.add(alreadyCompared);
 			ids.remove(0);
@@ -143,7 +148,7 @@ public class Diversification {
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
 					count++;
-					sql.insertQuery("insert into altMMRAvg Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+","+system+");",db);
+					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+","+count+");",db);
 					alreadyCompared = maxMMRid;
 					displayedIds.add(alreadyCompared);
 					int removableIndex = 0 ;

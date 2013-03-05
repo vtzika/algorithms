@@ -29,7 +29,7 @@ public class Main {
 	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
 		configuration.setDB("tests");
-		configuration.setReadTable("queries");
+		configuration.setReadTable("voyResults");
 		configuration.setInputTable("voyRequests");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
@@ -37,12 +37,12 @@ public class Main {
 		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title");
 		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
-		configuration.setAobMethod(AobMethod.PseudoL1);
 		configuration.setStatisticsTable("voyStatistics");
 		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
 		configuration.setIndexField(IndexedField.Title);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
+		configuration.setMMRTable("MMR");
 		return configuration;
 	}	
 	
@@ -88,7 +88,7 @@ public class Main {
 	}
 	private static void diversificationExperiment(Configuration configuration) throws Exception {
 		Diversification diversification = new Diversification(configuration);
-		diversification.alternativeDiversificationLast4With10NextAndFine();
+		diversification.diversificationSimple();
 	}
 
 	private static void voyagerExperiments(Configuration configuration) throws IOException {

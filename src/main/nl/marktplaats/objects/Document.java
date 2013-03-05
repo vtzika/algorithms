@@ -30,7 +30,7 @@ public Document(Configuration configuration) {
 
 private void setScore(long d1, long query,String db) {
 	SqlCommands sql = new SqlCommands();
-	this.score=sql.selectDoubleQuery("select score from "+this.table+" where doc="+d1+" and query = "+query+" ;",db);
+	this.score=sql.selectDoubleQuery("select score from "+this.table+" where docs="+d1+" and query = "+query+" ;",db);
 		
 }
 
