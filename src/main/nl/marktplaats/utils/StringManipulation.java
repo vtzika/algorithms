@@ -251,11 +251,6 @@ public class StringManipulation {
 		}
 	}
 
-	public HashMap<String, String> extractDocAndScoreFromString(String intValue) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getStringSeparatedByCommas(String origQuery) {
 		String[]  terms = origQuery.split(" ");
 		String newQuery = terms[0];

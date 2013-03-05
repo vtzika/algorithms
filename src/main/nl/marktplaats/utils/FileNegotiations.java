@@ -18,15 +18,24 @@ import java.util.List;
 
 public class FileNegotiations {
 
-	public static String getTxtLines(String classifiedFile) {
-		String returnedlines = " ";
+	public static String getTxtLinesAndReurnString(String classifiedFile) {
+		String returnedlines = "";
+		for(String line:getTxtLinesAndReturnList(classifiedFile))
+		{
+			returnedlines +=line +" ";
+		}
+		return returnedlines;
+	}
+
+	public static List<String> getTxtLinesAndReturnList(String classifiedFile) {
+		List<String> returnedlines = new ArrayList<String>();
 		try {
 			FileInputStream fstream = new FileInputStream(classifiedFile);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
-				returnedlines += strLine;
+				returnedlines.add(strLine);
 			}
 			in.close();
 		} catch (Exception e) {
@@ -34,7 +43,6 @@ public class FileNegotiations {
 		}
 		return returnedlines;
 	}
-
 	public void createFile(String inputtext, String path) {
 
 		try {
@@ -42,7 +50,7 @@ public class FileNegotiations {
 			BufferedWriter out = new BufferedWriter(ryt);
 			out.write(inputtext);
 			out.close();
-			System.out.println(path);
+			System.out.println("File created : "+path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -127,10 +135,7 @@ public class FileNegotiations {
 		ResultSet rs;
 		String inputtext = "";
 		SqlCommands sql = new SqlCommands();
-		System.out.println(table);
-		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" where system like '"+system+"';",db);
-		//List<Long> queries = sql.selectListLongQuery("select distinct(query) from "+table+" where query<85 and RPM>0;",db);
-
+		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" ;",db);
 		for(Long query:queries)
 		{
 		try {
@@ -140,14 +145,7 @@ public class FileNegotiations {
 			Connection connection = DriverManager.getConnection(connectionURL,
 					"root", "qwe123");
 			Statement statement = connection.createStatement(); 
-			String QueryString = "select distinct query,docs,score,sequence from "+table+" where  query="+query+" and  system like '"+system+"' and sequence<100 order by sequence;"; 
-			//String QueryString = "select distinct query,doc,RPM from "+table+" where query="+query+" and RPM>0 order by sequence;"; 
-					//"select query,doc,score,sequence from compTfidf;";
-			
-				
-			
-			//String QueryString = "select distinct query,doc,"+system+" from mapldfAttr where query="+query+" order by "+system+" desc;"; 
-			System.out.println(QueryString);
+			String QueryString = "select distinct query,docs,score,sequence from "+table+" where  query="+query+" and sequence<100 order by sequence;"; 
 			rs = statement.executeQuery(QueryString);
 			while (rs.next()) {
 				inputtext = inputtext + rs.getInt(1) + " Q0 " + rs.getLong(2) + " "+ rs.getInt(4) + " " + rs.getDouble(3)+ " indri\n";

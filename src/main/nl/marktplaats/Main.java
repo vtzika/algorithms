@@ -37,7 +37,7 @@ public class Main {
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
 		configuration.setExperiment(Experiment.VoyagerScores);
-		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title/");
+		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title");
 		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
 		configuration.setAobMethod(AobMethod.PseudoL2);
@@ -89,7 +89,7 @@ public class Main {
 		voyager.createQueryVoyagerQueryLanguage();
 		voyager.runVoyagerQueries();
 		voyager.saveVoyagerResultsToTable();
-		//voyager.createInputFiles();
+		voyager.createInputFiles();
 		
 	}
 

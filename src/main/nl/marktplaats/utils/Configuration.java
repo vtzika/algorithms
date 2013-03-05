@@ -139,15 +139,16 @@ public class Configuration {
 		boolean d = checkIfHasStringValue("IndexField ",this.indexField.toString());
 		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",this.voyagerResultsFolder);
 		boolean f = checkIfHasStringValue("VoyagerResultsTable ",this.voyagerResultsTable);
+		boolean g = checkIfHasStringValue("trecInputFolder ",this.trecInputFolder);
 		
-		if(a && b && c && d && e && f)
+		if(a && b && c && d && e && f && g)
 			return true;
 		else return false;
 		
 	}
 	
 	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
-		if(fieldsValue.isEmpty())
+		if(fieldsValue==null)
 			System.out.println(fieldsName+" needs to be configured");
 		else
 		{
