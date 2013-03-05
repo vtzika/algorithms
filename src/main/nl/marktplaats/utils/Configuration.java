@@ -26,6 +26,7 @@ public class Configuration {
 	private String trecInputFolder;
 	private String statisticsTable;
 	private String inputMMRTable;
+	private MMRMethod mmrMethod;
 	
 	public void setDB(String database) {
 		

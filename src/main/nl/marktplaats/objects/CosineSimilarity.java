@@ -1,24 +1,26 @@
 package main.nl.marktplaats.objects;
 
-import java.util.List;
 import lemurproject.indri.QueryEnvironment;
+import main.nl.marktplaats.utils.Configuration;
 
 public class CosineSimilarity {
 	private Document doc1;
 	private Document doc2;
 	
 	
-	public CosineSimilarity(String db, long d1, long d2, long query, String dbTable, QueryEnvironment env,int system) throws Exception {
+	public CosineSimilarity(String db, long d1, long d2, long query, String dbTable, QueryEnvironment env) throws Exception {
 		
-		doc1 = new Document(db,d1, query, dbTable, env,system);
-		doc2 = new Document(db,d2, query, dbTable, env,system);
+		doc1 = new Document(db,d1, query, dbTable, env);
+		doc2 = new Document(db,d2, query, dbTable, env);
 	}
 	
+	public CosineSimilarity(Configuration configuration) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Double calculateCosineSimilarity()
 	{
 		Double cosSimilarity = 0.0;
-		List<Term> termsDoc1 = doc1.getTerms();
-		List<Term> termsDoc2 = doc2.getTerms();
 		Double sumSquaredWeightDoc1 = doc1.getSumSquaredWeight();
 		Double sumSquaredWeightDoc2 = doc2.getSumSquaredWeight();
 		Double St1it2i = getSumTermsWeightsForBothDocs();

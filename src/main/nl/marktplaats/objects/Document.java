@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lemurproject.indri.QueryEnvironment;
+import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.SqlCommands;
 import main.nl.marktplaats.utils.StringManipulation;
 
@@ -12,20 +13,24 @@ public class Document {
 	private List<Term> terms;
 	String table;
 	
-public Document(String db,long d1, long query, String dbTable, QueryEnvironment env,int system) throws Exception {
+public Document(String db,long d1, long query, String dbTable, QueryEnvironment env) throws Exception {
 	try{
 		
 		this.table = dbTable;
 		setTerms(d1,env, db);
-		setScore(d1,query,db,system);
+		setScore(d1,query,db);
 	}
 	catch (Exception e) {
 		System.out.println(e);	}
 	}
 
-private void setScore(long d1, long query,String db, int system) {
+public Document(Configuration configuration) {
+	// TODO Auto-generated constructor stub
+}
+
+private void setScore(long d1, long query,String db) {
 	SqlCommands sql = new SqlCommands();
-	this.score=sql.selectDoubleQuery("select score from "+this.table+" where system="+system+" and doc="+d1+" and query = "+query+" ;",db);
+	this.score=sql.selectDoubleQuery("select score from "+this.table+" where doc="+d1+" and query = "+query+" ;",db);
 		
 }
 

@@ -3,7 +3,7 @@ package main.nl.marktplaats;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
-
+import main.nl.marktplaats.algorithm.Diversification;
 import main.nl.marktplaats.algorithm.ExtendQuery;
 import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
 import main.nl.marktplaats.objects.Experiment;
@@ -75,7 +75,7 @@ public class Main {
 		{
 			boolean checkMMR = configuration.checkMMRConfiguration();
 			if(checkMMR)
-				divertificationExperiment(configuration);
+				diversificationExperiment(configuration);
 			break;
 		}
 		case Synonyms:
@@ -86,10 +86,9 @@ public class Main {
 		}
 		
 	}
-
-	private static void divertificationExperiment(Configuration configuration) {
-		// TODO Auto-generated method stub
-		
+	private static void diversificationExperiment(Configuration configuration) throws Exception {
+		Diversification diversification = new Diversification(configuration);
+		diversification.alternativeDiversificationLast4With10NextAndFine();
 	}
 
 	private static void voyagerExperiments(Configuration configuration) throws IOException {
@@ -109,7 +108,6 @@ public class Main {
 		{
 			String results = llr.calculateLLRForDoc(docQuery, configuration.getQueryEnvRepository());
 			System.out.println("QUERY:"+docQuery.getValue()+" \n NEW QUERY: "+results);
-			//sql.insertQuery("insert into llrQueries values("+docQuery.getKey()+",'"+results+"')", configuration.getDb());
 		}
 		System.out.println("What Do you want to with the new Queries?");
 	}
