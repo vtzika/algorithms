@@ -125,7 +125,6 @@ public class FileNegotiations {
 
 	public String[] getListFiles(String folder) {
 		File repository=new File(folder);
-		String[] files=new String[(int) folder.length()];
 		String[] repositories = repository.list();
 		return repositories;
 	}
@@ -139,7 +138,6 @@ public class FileNegotiations {
 		for(Long query:queries)
 		{
 		try {
-			int count=0;
 			String connectionURL = "jdbc:mysql://localhost:3306/"+db;
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Connection connection = DriverManager.getConnection(connectionURL,
@@ -160,8 +158,28 @@ public class FileNegotiations {
 		new FileNegotiations()
 		.createFile(inputtext, new String(path));
 	}
-	
 
+	public void getResultsFromTxtAndSaveInDB(String file, String table, String db) {
+		SqlCommands sql = new SqlCommands();
+		try {
+			FileInputStream fstream = new FileInputStream(file);
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String strLine;
+			while ((strLine = br.readLine()) != null) {
+				String[] words = strLine.split(" ");
+				sql.insertQuery("insert into " + table
+						+ " VALUES (" + words[0] + "," + words[2] + ","
+						+ words[4] + "," + '0' + ",'searchInEntire');",
+						db);
+			}
+			in.close();
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+
+	}
+	
 
 
 }

@@ -381,4 +381,26 @@ public class SqlCommands {
 		return null;
 	}
 
+	public HashMap<String, String> selectHashMapStringStringQuery(
+			String query, String db) {
+		HashMap<String, String> vipsQueries = new HashMap<String, String>();
+		try {
+			ResultSet rs = null;
+			String connectionURL = "jdbc:mysql://localhost:3306/" + db;
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			Connection connection = DriverManager.getConnection(connectionURL,
+					"root", "qwe123");
+			Statement statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			while (rs.next()) {
+				vipsQueries.put(rs.getString(1), rs.getString(2));
+			}
+			statement.close();
+			connection.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return vipsQueries;
+	}
+
 }

@@ -94,7 +94,7 @@ public class Main {
 	private static void indriExperiments(Configuration configuration) {
 		
 		Indri indri = new Indri(configuration);
-		indri.createQueryIndriQueryLanguage();
+		indri.createQueryFromTableIndriQueryLanguage();
 		indri.runIndriQueries();
 		indri.saveIndriResultsToTable();
 		indri.gatherStatistics();		
