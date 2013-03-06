@@ -1,0 +1,12 @@
+octave-core
+.classpath
+.project
+.settings/
+target/
+searchlogs/
+SimulatorOutput*.tab
+bin/
+main/
+*.log
+*.xlsx
+*.class
