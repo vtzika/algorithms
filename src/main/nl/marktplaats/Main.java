@@ -31,17 +31,19 @@ public class Main {
 	 */
 	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
+		String pathToDisk = "/media/Data/Coen/";
+		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("tests");
 		configuration.setReadTable("voyResults");
 		configuration.setInputTable("voyRequests");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.Voyager);
 		configuration.setExperiment(Experiment.Diversification);
-		configuration.setVoyagerResultsFolder("/home/varvara/workspace/Results/similarItems/voyager/Title");
-		configuration.setTrecInputFolder("/home/varvara/workspace/Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
+		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
+		configuration.setTrecInputFolder(pathToDisk+"Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
 		configuration.setStatisticsTable("voyStatistics");
-		configuration.setQueryEnvRepository("/home/varvara/workspace/repositories/repositoriesL1/");
+		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
 		configuration.setIndexField(IndexedField.Title);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");

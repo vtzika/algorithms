@@ -39,6 +39,7 @@ public class Configuration {
 	private String classifiedFile;
 	private String indriResultsFolder;
 	private String IndriResultsTable;
+	private String pathToDisk;
 
 	public void setDB(String database) {
 
@@ -462,5 +463,12 @@ public class Configuration {
 	}
 	public void setIndriScoresInputTable(String table) {
 		this.IndriResultsTable = table;
+	}
+
+	public void setLocalPathToExternalDisk(String path) {
+		this.pathToDisk = path;
+	}
+	public String getLocalPathToExternalDisk() {
+		return this.pathToDisk;
 	}
 }
