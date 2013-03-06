@@ -8,6 +8,7 @@ import main.nl.marktplaats.algorithm.ExtendQuery;
 import main.nl.marktplaats.algorithm.LogLikelihoodRatioCalculator;
 import main.nl.marktplaats.objects.Experiment;
 import main.nl.marktplaats.objects.IndexedField;
+import main.nl.marktplaats.objects.Indri;
 import main.nl.marktplaats.objects.LLRDisciminativeTermsL1;
 import main.nl.marktplaats.objects.LLRDisciminativeTermsL2;
 import main.nl.marktplaats.objects.PseudoL1Extention;
@@ -18,6 +19,7 @@ import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
 import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.MMRMethod;
+import main.nl.marktplaats.utils.RetrievalMethod;
 import main.nl.marktplaats.utils.SearchEngine;
 import main.nl.marktplaats.utils.SqlCommands;
 
@@ -76,15 +78,28 @@ public class Main {
 			break;
 		}
 		case Synonyms:
-			boolean checkSysnonyms = configuration.checkSynonymsConfiguration();
-			if(checkSysnonyms)
+			boolean checkSynonyms = configuration.checkSynonymsConfiguration();
+			if(checkSynonyms)
 				synonymsExperiment(configuration);
 			break;
+		case IndriScores:
+			boolean checkIndri = configuration.checkIndriConfiguration();
+			if(checkIndri)
+				indriExperiments(configuration);
 		default:
 			break;
 		}
 		
 	}
+	private static void indriExperiments(Configuration configuration) {
+		
+		Indri indri = new Indri(configuration);
+		indri.createQueryIndriQueryLanguage();
+		indri.runIndriQueries();
+		indri.saveIndriResultsToTable();
+		indri.gatherStatistics();		
+	}
+
 	private static void synonymsExperiment(Configuration configuration) throws Exception {
 		llr(configuration);		
 	}

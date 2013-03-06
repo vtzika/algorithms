@@ -27,6 +27,7 @@ public class Configuration {
 	private String statisticsTable;
 	private String inputMMRTable;
 	private MMRMethod mmrMethod;
+	private RetrievalMethod retrievalMethod;
 	
 	public void setDB(String database) {
 		
@@ -222,5 +223,17 @@ public class Configuration {
 		if(a && b)
 			return true;
 		else return false;
+	}
+	public boolean checkIndriConfiguration() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void setRetrievalMethod(RetrievalMethod method) {
+		this.retrievalMethod = method;
+	}
+	
+	public RetrievalMethod getRetrievalMethod( ) {
+		return this.retrievalMethod;
 	}
 }
