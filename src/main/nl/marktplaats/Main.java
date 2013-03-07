@@ -53,6 +53,7 @@ public class Main {
 		configuration.setReadQueriesFromSGML(true);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
 		configuration.setQueryChoice(1);
+		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		return configuration;
 	}	
 	
@@ -104,6 +105,7 @@ public class Main {
 			queries = indri.createQueryFromSGMLIndriQueryLanguage();
 		else 
 			queries = indri.createQueryFromTableIndriQueryLanguage();
+		indri.createParameterFiles(queries);
 		//indri.runIndriQueries();
 		//indri.saveIndriResultsToTable();
 		//indri.gatherStatistics();		

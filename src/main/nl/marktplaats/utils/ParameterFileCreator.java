@@ -13,17 +13,21 @@ import java.util.List;
 public class ParameterFileCreator {
 	Configuration configuration ;
 	List<String> queryTerms;
+	private String docNo;
 
-	public ParameterFileCreator(Configuration c, String query) {
+	public ParameterFileCreator(Configuration c, String query, String docno) {
 		this.configuration = c;
 		queryTerms = new ArrayList<String>();
+		this.docNo  = docno;
+		System.out.println(docno);
+		System.out.println(query);
 		for (String term:query.split(" ") )
 		{
 			queryTerms.add(term);
 		}
 	}
 
-	public boolean createFile(long docNo) {
+	public boolean createFile() {
 		String query = takeQueryString();
 		String repositories = "";
 		String inputText = "";
@@ -39,8 +43,7 @@ public class ParameterFileCreator {
 		inputText = "<parameters> \n " + repositories + "\n" + queryNumber
 				+ baseline + "\n" + countString + "\n" + trecFormat;
 		Writer output = null;
-
-		File file = new File(configuration.getRepositoryPath()+"/"+configuration.getRetrievalMethod().toString()+"/"+docNo);
+		File file = new File(configuration.getParameterFilesDirectory()+"/"+docNo);
 		String finalText = inputText + "\n </parameters>";
 		try {
 			output = new BufferedWriter(new FileWriter(file));

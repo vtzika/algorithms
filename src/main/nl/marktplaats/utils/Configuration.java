@@ -288,7 +288,8 @@ public class Configuration {
 		else
 			b = checkIfHasStringValue("ReadTable ", this.readTable);
 		boolean c = checkIfItIsNumber("Query Choice", this.queryChoice);
-		if (a && b && c)
+		boolean d = checkIfHasStringValue("ParameterFileDirectory", this.parameterFileDirectory);
+		if (a && b && c && d)
 			return true;
 		else
 			return false;
@@ -509,5 +510,17 @@ public class Configuration {
 
 	public int getQueryChoice() {
 		return this.queryChoice;
+	}
+
+	public String getBaseline() {
+		SearchEngine se = this.searchEngine;
+		switch (se) {
+		case IndriOkapi:
+			return "okapi";
+		case IndriTfidf:
+			return "tfidf";
+		default:
+			return null;
+		}
 	}
 }

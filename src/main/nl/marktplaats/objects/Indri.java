@@ -1,10 +1,12 @@
 package main.nl.marktplaats.objects;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import main.nl.marktplaats.utils.ClassifiedParser;
 import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.FileNegotiations;
+import main.nl.marktplaats.utils.ParameterFileCreator;
 import main.nl.marktplaats.utils.RetrievalMethod;
 import main.nl.marktplaats.utils.SqlCommands;
 import main.nl.marktplaats.utils.Statistics;
@@ -32,7 +34,6 @@ public class Indri {
 		ClassifiedParser classifiedParser = new ClassifiedParser();
 		classifiedParser.setClassified(configuration.getClassifiedFile());
 		String query = configuration.setClassifiedForQuerying(classifiedParser.getClassified());
-		System.out.println(query);
 		return query;
 	}
 
@@ -69,6 +70,19 @@ public class Indri {
 	public void gatherStatistics() {
 		Statistics stat = new Statistics(configuration);
 		stat.gatherStatistics();
+	}
+
+	public void createParameterFiles(HashMap<String, String> queries) {
+		ParameterFileCreator parameterFile;
+		for(Entry<String, String> docNoAndQueries : queries.entrySet())
+		{
+			String docno = docNoAndQueries.getKey().replaceAll(".sgml", "");
+			parameterFile = new ParameterFileCreator(configuration, docNoAndQueries.getValue(), docno );
+			parameterFile.createFile();
+			
+			
+		}
+		
 	}
 
 }
