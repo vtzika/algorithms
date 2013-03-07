@@ -46,9 +46,9 @@ public class Main {
 		configuration.setSearchEngine(SearchEngine.Voyager);
 		configuration.setStatisticsTable("statistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
-		configuration.setTrecInputFolder(pathToDisk+"Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
+		configuration.setTrecInputFolder(pathToDisk+"trecResults/tests");
 		configuration.setVoyagerResultsTable("voyScores");
-		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
+		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/");
 		configuration.setIndexField(IndexedField.Title);
 /*
  * 		
@@ -116,9 +116,9 @@ public class Main {
 			queries = indri.createQueryFromSGMLIndriQueryLanguage();
 		else 
 			queries = indri.createQueryFromTableIndriQueryLanguage();
-		//indri.createParameterFiles(queries);
-		//indri.runIndriQueries();
-		//indri.saveIndriResultsToTable();
+		indri.createParameterFiles(queries);
+		indri.runIndriQueries();
+		indri.saveIndriResultsToTable();
 		indri.gatherStatistics();		
 	}
 
@@ -157,9 +157,9 @@ public class Main {
 	private static void voyagerExperiments(Configuration configuration) throws IOException {
 		Voyager voyager = new Voyager(configuration);
 		voyager.createQueryVoyagerQueryLanguage();
-		voyager.runVoyagerQueries();
+		//voyager.runVoyagerQueries();
 		voyager.saveVoyagerResultsToTable();
-		voyager.createInputFiles();
+		//voyager.createInputFiles();
 		voyager.gatherStatistics();
 	}
 

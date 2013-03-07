@@ -245,6 +245,7 @@ public class Voyager {
 		public void parseResults(){
 			FileNegotiations f = new FileNegotiations(); 
 			String file = configuration.getVoyagerResultsFolder();
+			System.out.println(file);
 			for (String query:f.getListFiles(file))
 			{	
 				parseVoyagerResults(file+"/"+query);
@@ -269,12 +270,16 @@ public class Voyager {
 							String score = docsEntry.getValue().split("_")[1];
 							String seq = docsEntry.getValue().split("_")[0];
 							count++;
+							double ctr = sql.selectDoubleQuery("select ctr from ctrRpmScores where ad_id="+docsEntry.getKey()+";", configuration.getDb());
+							double rpm = sql.selectDoubleQuery("select rpm from ctrRpmScores where ad_id="+docsEntry.getKey()+";", configuration.getDb());
 							if(count<=10000)
 							{
-								insString+="("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'',"+getCTR(docsEntry.getKey())+","+getRPM(docsEntry.getKey())+"),";
+								System.out.println("("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'',"+getCTR(docsEntry.getKey())+","+getRPM(docsEntry.getKey())+"),'"+rpm+"','"+ctr+"");
+								insString+="("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'',"+getCTR(docsEntry.getKey())+","+getRPM(docsEntry.getKey())+"),'"+rpm+"','"+ctr+"";
 							}
 							else break;
 						}
+						
 						sql.insertQuery("insert into "+configuration.getVoyagerResultsTable()+" values "+insString+"(0,0,0,0,'',0.0,0.0);", configuration.getDb());
 						insString  = "";
 					}
