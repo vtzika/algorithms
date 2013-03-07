@@ -128,6 +128,25 @@ public class Configuration {
 
 	public void setExperiment(Experiment exp) {
 		this.experiment = exp;
+		switch (exp) {
+		case Aob:
+			setSystem("1");
+			break;
+		case VoyagerScores:
+			setSystem("2");
+			break;
+		case Diversification:
+			setSystem("3");
+			break;
+		case Synonyms:
+			setSystem("4");
+			break;
+		case IndriScores:
+			setSystem("5");
+			break;
+		default:
+			break;
+		}
 	}
 
 	public Experiment getExperiment() {
@@ -182,7 +201,7 @@ public class Configuration {
 		return this.inputMMRTable;
 	}
 
-	private boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
+	public boolean checkIfHasStringValue(String fieldsName, String fieldsValue) {
 		if (fieldsValue == null)
 			System.out.println(fieldsName + " needs to be configured");
 		else {
@@ -221,8 +240,7 @@ public class Configuration {
 		boolean b = checkIfHasStringValue("ReadTable ", this.readTable);
 		boolean c = checkIfHasStringValue("voyagerQueriesTable ",
 				this.voyagerQueriesTable);
-		boolean d = checkIfHasStringValue("IndexField ",
-				this.indexField.toString());
+		boolean d = checkIfIndexFieldIsNull("IndexField ",this.indexField);
 		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",
 				this.voyagerResultsFolder);
 		boolean f = checkIfHasStringValue("VoyagerResultsTable ",
@@ -232,11 +250,17 @@ public class Configuration {
 		boolean h = checkIfHasStringValue("statisticsTable  ",
 				this.statisticsTable);
 
-		if (a && b && c && d && e && f && g && h)
+		if (a && b && c  && e && f && g && h)
 			return true;
 		else
 			return false;
 
+	}
+
+	private boolean checkIfIndexFieldIsNull(String fieldsName, IndexedField fieldsValue) {
+		if(fieldsValue==null)
+			return false;
+			else return true;
 	}
 
 	public boolean checkAobConfiguration() {
@@ -288,14 +312,25 @@ public class Configuration {
 		else
 			b = checkIfHasStringValue("ReadTable ", this.readTable);
 		boolean c = checkIfItIsNumber("Query Choice", this.queryChoice);
-		boolean d = checkIfHasStringValue("ParameterFileDirectory", this.parameterFileDirectory);
-		boolean e = checkIfHasStringValue("Indri Results Folder ", this.indriResultsFolder);
-		boolean f = checkIfHasStringValue("Indri Path Directory ", this.indriPath);
-		boolean g = checkIfHasStringValue("Indri Results Table ", IndriResultsTable);
-		if (a && b && c && d && e && f && g)
+		boolean d = checkIfHasStringValue("ParameterFileDirectory",
+				this.parameterFileDirectory);
+		boolean e = checkIfHasStringValue("Indri Results Folder ",
+				this.indriResultsFolder);
+		boolean f = checkIfHasStringValue("Indri Path Directory ",
+				this.indriPath);
+		boolean g = checkIfHasStringValue("Indri Results Table ",
+				IndriResultsTable);
+		boolean h = checkIfSearchEngineeIsNull("SearchEnginee ", this.searchEngine);
+		if (a && b && c && d && e && f && g && h)
 			return true;
 		else
 			return false;
+	}
+
+	private boolean checkIfSearchEngineeIsNull(String fieldsName, SearchEngine fieldsValue) {
+		if(fieldsValue==null)
+		return false;
+		else return true;
 	}
 
 	private boolean checkIfItIsNumber(String fieldsName, int fieldsValue) {
@@ -539,5 +574,17 @@ public class Configuration {
 			System.out.println("Choose Search Enginee !!!!!");
 			return "";
 		}
+	}
+
+	public boolean checkConfiguration() {
+		boolean a = checkIfHasStringValue("DB : ", this.db);
+		boolean b = checkIfHasStringValue("Repositories : ", this.repositoryPath);
+		boolean c = false;
+		if (this.experiment == null) {
+			System.out.println("Please provide with valid Experiment choice");
+		} else
+			c = true;
+		
+		return (a && b && c);
 	}
 }

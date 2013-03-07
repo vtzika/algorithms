@@ -159,7 +159,7 @@ public class FileNegotiations {
 		.createFile(inputtext, new String(path));
 	}
 
-	public void getResultsFromTxtAndSaveInDB(String file, String table, String db, String queryChoice) {
+	public void getResultsFromTxtAndSaveInDB(String file, String table, String db, String queryChoice, String experiment) {
 		SqlCommands sql = new SqlCommands();
 		try {
 			FileInputStream fstream = new FileInputStream(file);
@@ -168,10 +168,11 @@ public class FileNegotiations {
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
 				String[] words = strLine.split(" ");
+				double ctr = sql.selectDoubleQuery("select ctr from ctrRpmScores where ad_id="+words[2]+";", db);
+				double rpm = sql.selectDoubleQuery("select rpm from ctrRpmScores where ad_id="+words[2]+";", db);
 				sql.insertQuery("insert into " + table
 						+ " VALUES (" + words[0] + "," + words[2] + ","
-						+ words[4] + "," + words[3] + ", '"+queryChoice+"',0,0);",
-						db);
+						+ words[4] + "," + words[3] + ", '"+queryChoice+"','"+experiment+"',"+rpm+","+ctr+");",db);
 			}
 			in.close();
 		} catch (Exception e) {
@@ -179,6 +180,7 @@ public class FileNegotiations {
 		}
 
 	}
+
 	
 
 

@@ -462,7 +462,7 @@ public class Voyager {
 		}
 
 		public void runVoyagerQueries() throws IOException {
-			Process process = new ProcessBuilder("../utils/voyagerCallsFromEclipse.sh").start();
+			Process process = new ProcessBuilder("/media/Data/Coen/scripts/voyagerCallsFromEclipse.sh").start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
@@ -487,7 +487,12 @@ public class Voyager {
 		}
 
 		public void gatherStatistics() {
-			Statistics stat = new Statistics(configuration);
-			stat.gatherStatistics();
+			boolean a = configuration.checkIfHasStringValue("Statistics table : ",configuration.getStatisticsTable());
+			if(a)
+			{
+				Statistics stat = new Statistics(configuration);
+				stat.gatherStatistics();
+			}
+			
 		}
 }

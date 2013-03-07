@@ -43,7 +43,7 @@ public class Indri {
 	public HashMap<String, String> createQueryFromTableIndriQueryLanguage() {
 		SqlCommands sql = new SqlCommands();
 		System.out.println("Reading queries of table "+configuration.getReadTable());
-		HashMap<String, String> queries = sql.selectHashMapStringStringQuery("select doc,query from "+configuration.getReadTable()+";", configuration.getDb());
+		HashMap<String, String> queries = sql.selectHashMapStringStringQuery("select doc,query from "+configuration.getReadTable()+" where experiment="+configuration.getSystem()+";", configuration.getDb());
 		return queries;
 	}
 	public void runIndriQueries() throws IOException {
@@ -69,14 +69,18 @@ public class Indri {
 		String file = configuration.getIndriResultsFolder();
 		for (String query:f.getListFiles(file))
 		{	
-			f.getResultsFromTxtAndSaveInDB(file+"/"+query,configuration.getIndriScoresInputTable(), configuration.getDb(), ""+configuration.getQueryChoice());
+			f.getResultsFromTxtAndSaveInDB(file+"/"+query,configuration.getIndriScoresInputTable(), configuration.getDb(), ""+configuration.getQueryChoice(), configuration.getSystem());
 		}
 		System.out.println("Results saved on : "+configuration.getIndriScoresInputTable());
 	}
 
 	public void gatherStatistics() {
-		Statistics stat = new Statistics(configuration);
-		stat.gatherStatistics();
+		boolean a = configuration.checkIfHasStringValue("Statistics table : ",configuration.getStatisticsTable());
+		if(a)
+		{
+			Statistics stat = new Statistics(configuration);
+			stat.gatherStatistics();
+		}
 	}
 
 	public void createParameterFiles(HashMap<String, String> queries) {

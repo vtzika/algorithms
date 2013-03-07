@@ -19,7 +19,6 @@ import main.nl.marktplaats.objects.analyticsL2Extention;
 import main.nl.marktplaats.utils.AobMethod;
 import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.MMRMethod;
-import main.nl.marktplaats.utils.RetrievalMethod;
 import main.nl.marktplaats.utils.SearchEngine;
 import main.nl.marktplaats.utils.SqlCommands;
 
@@ -33,37 +32,43 @@ public class Main {
 		Configuration configuration = new Configuration();
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
-		configuration.setDB("tests");
+		configuration.setDB("algorithms");
+		configuration.setExperiment(Experiment.VoyagerScores);
+		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
+		configuration.setReadQueriesFromSGML(true);
+		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
+		configuration.setQueryChoice(1);
+		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
+		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
+		configuration.setIndriScoresInputTable("indriScores");
 		configuration.setReadTable("queries");
-		configuration.setInputTable("indriStatistics");
-		configuration.setVoyagerQueriesTable("voyRequests");
-		configuration.setSearchEngine(SearchEngine.IndriOkapi);
-		configuration.setExperiment(Experiment.IndriScores);
-		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
-		configuration.setTrecInputFolder(pathToDisk+"Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
-		configuration.setVoyagerResultsTable("voyResults");
-		configuration.setStatisticsTable("voyStatistics");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
+		configuration.setSearchEngine(SearchEngine.Voyager);
+		configuration.setStatisticsTable("statistics");
+		configuration.setVoyagerQueriesTable("voyRequests");
+		configuration.setTrecInputFolder(pathToDisk+"Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
+		configuration.setVoyagerResultsTable("voyScores");
+		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
 		configuration.setIndexField(IndexedField.Title);
+/*
+ * 		
+		configuration.setSearchEngine(SearchEngine.IndriOkapi);
+		configuration.setStatisticsTable("voyStatistics");
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setMMRTable("MMR");
 		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		configuration.setMmrMethod(MMRMethod.simpleMMR);
-		configuration.setReadQueriesFromSGML(true);
-		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
-		configuration.setQueryChoice(1);
-		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
-		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
-		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
-		configuration.setIndriScoresInputTable("indriScores");
+		
+ */
 		
 		return configuration;
 	}	
 	
 	public static void main(String[] args) throws Exception {
 		Configuration configuration = createConfiguration();
-		runExperiment(configuration);
+		if(configuration.checkConfiguration())
+			runExperiment(configuration);
 	}
 	private static void runExperiment(Configuration configuration) throws Exception {
 		Experiment experiment = configuration.getExperiment();
@@ -96,7 +101,9 @@ public class Main {
 			boolean checkIndri = configuration.checkIndriConfiguration();
 			if(checkIndri)
 				indriExperiments(configuration);
+			break;
 		default:
+			System.out.println("Please provide valid experiment");
 			break;
 		}
 		
@@ -109,9 +116,9 @@ public class Main {
 			queries = indri.createQueryFromSGMLIndriQueryLanguage();
 		else 
 			queries = indri.createQueryFromTableIndriQueryLanguage();
-		indri.createParameterFiles(queries);
-		indri.runIndriQueries();
-		indri.saveIndriResultsToTable();
+		//indri.createParameterFiles(queries);
+		//indri.runIndriQueries();
+		//indri.saveIndriResultsToTable();
 		indri.gatherStatistics();		
 	}
 
