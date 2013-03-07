@@ -34,11 +34,11 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("tests");
-		configuration.setReadTable("voyResults");
+		configuration.setReadTable("queries");
 		configuration.setInputTable("voyRequests");
 		configuration.setVoyagerQueriesTable("voyRequests");
-		configuration.setSearchEngine(SearchEngine.Voyager);
-		configuration.setExperiment(Experiment.Diversification);
+		configuration.setSearchEngine(SearchEngine.IndriOkapi);
+		configuration.setExperiment(Experiment.IndriScores);
 		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
 		configuration.setTrecInputFolder(pathToDisk+"Results/TrecFiles/inputFiles/similarItems/voyager/TitleNEWTest");
 		configuration.setVoyagerResultsTable("voyResults");
@@ -50,6 +50,9 @@ public class Main {
 		configuration.setMMRTable("MMR");
 		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		configuration.setMmrMethod(MMRMethod.simpleMMR);
+		configuration.setReadQueriesFromSGML(true);
+		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
+		configuration.setQueryChoice(1);
 		return configuration;
 	}	
 	
@@ -96,10 +99,14 @@ public class Main {
 	private static void indriExperiments(Configuration configuration) {
 		
 		Indri indri = new Indri(configuration);
-		indri.createQueryFromTableIndriQueryLanguage();
-		indri.runIndriQueries();
-		indri.saveIndriResultsToTable();
-		indri.gatherStatistics();		
+		HashMap<String,String> queries = new HashMap<String, String>();
+		if(configuration.isReadQueriesFromSGML())
+			queries = indri.createQueryFromSGMLIndriQueryLanguage();
+		else 
+			queries = indri.createQueryFromTableIndriQueryLanguage();
+		//indri.runIndriQueries();
+		//indri.saveIndriResultsToTable();
+		//indri.gatherStatistics();		
 	}
 
 	private static void synonymsExperiment(Configuration configuration) throws Exception {

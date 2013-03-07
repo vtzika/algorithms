@@ -10,7 +10,7 @@ import main.nl.marktplaats.objects.Experiment;
 import main.nl.marktplaats.objects.IndexedField;
 
 public class Configuration {
-	private int queryChoice ;
+	private int queryChoice;
 	private String voyagerQueriesTable;
 	private String voyagerResultsTable;
 	private String db;
@@ -40,6 +40,7 @@ public class Configuration {
 	private String indriResultsFolder;
 	private String IndriResultsTable;
 	private String pathToDisk;
+	private boolean readQueriesFromSGML;
 
 	public void setDB(String database) {
 
@@ -279,7 +280,27 @@ public class Configuration {
 	}
 
 	public boolean checkIndriConfiguration() {
-		// TODO Auto-generated method stub
+		// TODO IndriRetrievalMethod
+		boolean a = checkIfHasStringValue("DB ", this.db);
+		boolean b = false;
+		if (isReadQueriesFromSGML())
+			b = checkIfHasStringValue("SGMLFolder ", this.VIPFolder);
+		else
+			b = checkIfHasStringValue("ReadTable ", this.readTable);
+		boolean c = checkIfItIsNumber("Query Choice", this.queryChoice);
+		if (a && b && c)
+			return true;
+		else
+			return false;
+	}
+
+	private boolean checkIfItIsNumber(String fieldsName, int fieldsValue) {
+		if (fieldsValue > 0) {
+			System.out.println(fieldsName + " OK");
+			return true;
+		} else {
+			System.out.println(fieldsName + " needs to be configured");
+		}
 		return false;
 	}
 
@@ -323,137 +344,137 @@ public class Configuration {
 	public void setClassifiedFile(String file) {
 		this.classifiedFile = file;
 	}
+
 	public String getClassifiedFile() {
 		return this.classifiedFile;
 	}
 
 	public String setClassifiedForQuerying(Classified classified) {
-				// 1:all title words
-				// 2:all description
-				// 3:same words in title and description
-				// 4:words in title or description
-				// 5:words in the title and almost the same or greater Price
-				// 6:words in the description and almost the same or greater Price
-				// 7:same words in the description and title and almost the same or
-				// greater Price
-				// 8:words in title and in description and almost the same or greater
-				// TODO Price
-				// 9:words in the category or in attributes
-				// 10:entire doc
-				Queries q = new Queries(classified);
-				int choice=this.queryChoice;
-				String query1 = q.getStringQuery(classified.getTitle().getTitleWords());
-				List<String> query1Terms =new ArrayList<String>();
-				for(String term:query1.split(" "))
-				{
-					query1Terms.add(term);
-				}
-			
-				String query2 = q.getStringQuery(classified.getDescription()
-						.getDescriptionWords());
-				List<String> query2Terms =new ArrayList<String>();
-				for(String term:query2.split(" "))
-				{
-					query2Terms.add(term);
-				}
-				String query3 = q.getStringQuery(q.getSameWordsOfTwoLists(classified
-						.getTitle().getTitleWords(), classified.getDescription().getDescriptionWords()));
-				List<String> query3Terms = q.getSameWordsOfTwoLists(classified
-						.getTitle().getTitleWords(), classified.getDescription().getDescriptionWords());
-				
-				String query4 = q.getStringQuery(q.getCombinedLists(classified
-						.getTitle().getTitleWords(), classified.getDescription()
-						.getDescriptionWords()));
-				List<String> query4Terms =q.getCombinedLists(classified
-						.getTitle().getTitleWords(), classified.getDescription()
-						.getDescriptionWords());
-				
-				String query5 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
-						query1));
-			
-						
-				String query6 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
-						query2));
-				String query7 = q.combineQueries(newArrayList(q.queryGreaterPrice(),query3));
-				String query8 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
-						query4));
-				
-				
-				String query9 = q.getStringQuery(q.getCombinedLists(classified.getCategory().getCategoryWords(),classified.getAttributes().getAttributesWords())); 
-				List<String> query9Terms =new ArrayList<String>();
-				for(String term:query9.split(" "))
-				{
-					query9Terms.add(term);
-				}
-				
-				String query10 = q.combineQueries(newArrayList(query9, query4));
-				List<String> query10Terms =new ArrayList<String>();
-				for(String term:query10.split(" "))
-				{
-					query10Terms.add(term);
-				}
-				
-				
-				//List<String> discrTerms = removeDuplicatesAndLengthSmall(query1Terms);
-						
-				//DescriptiveTerms descripTerms = new DescriptiveTerms(discrTerms);
-				//String query11 = q.getStringQuery(descripTerms.choose10Terms());
-				
-				//List<String> query11Terms = descripTerms.choose10Terms();
+		// 1:all title words
+		// 2:all description
+		// 3:same words in title and description
+		// 4:words in title or description
+		// 5:words in the title and almost the same or greater Price
+		// 6:words in the description and almost the same or greater Price
+		// 7:same words in the description and title and almost the same or
+		// greater Price
+		// 8:words in title and in description and almost the same or greater
+		// TODO Price
+		// 9:words in the category or in attributes
+		// 10:entire doc
+		Queries q = new Queries(classified);
+		int choice = this.queryChoice;
+		String query1 = q.getStringQuery(classified.getTitle().getTitleWords());
+		List<String> query1Terms = new ArrayList<String>();
+		for (String term : query1.split(" ")) {
+			query1Terms.add(term);
+		}
 
-				String query;
-				List<String> queryTerms;
-				switch (choice) {
-				case 1:
-					query = query1;
-					queryTerms=query1Terms;
-					break;
-				case 2:
-					query = query2;
-					queryTerms=query2Terms;
-					break;
-				case 3:
-					query = query3;
-					queryTerms=query3Terms;
-					break;
-				case 4:
-					query = query4;
-					queryTerms=query4Terms;
-					break;
-				case 5:
-					query = query5;
-					break;
-				case 6:
-					query = query6;
-					break;
-				case 7:
-					query = query7;
-					break;
-				case 8:
-					query = query8;
-					break;
-				case 9:
-					query = query9;
-					queryTerms = query9Terms;
-					break;
-				case 10:
-					query = query10;
-					queryTerms = query10Terms;
-					break;
-				/*case 11:
-					query = query11;
-					queryTerms = query11Terms;
-					break;
-					*/
-				default:
-					throw new RuntimeException("Cannot create query with number " + choice);
-				}
-				return query;
+		String query2 = q.getStringQuery(classified.getDescription()
+				.getDescriptionWords());
+		List<String> query2Terms = new ArrayList<String>();
+		for (String term : query2.split(" ")) {
+			query2Terms.add(term);
+		}
+		String query3 = q.getStringQuery(q.getSameWordsOfTwoLists(classified
+				.getTitle().getTitleWords(), classified.getDescription()
+				.getDescriptionWords()));
+		List<String> query3Terms = q.getSameWordsOfTwoLists(classified
+				.getTitle().getTitleWords(), classified.getDescription()
+				.getDescriptionWords());
+
+		String query4 = q.getStringQuery(q.getCombinedLists(classified
+				.getTitle().getTitleWords(), classified.getDescription()
+				.getDescriptionWords()));
+		List<String> query4Terms = q.getCombinedLists(classified.getTitle()
+				.getTitleWords(), classified.getDescription()
+				.getDescriptionWords());
+
+		String query5 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
+				query1));
+
+		String query6 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
+				query2));
+		String query7 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
+				query3));
+		String query8 = q.combineQueries(newArrayList(q.queryGreaterPrice(),
+				query4));
+
+		String query9 = q.getStringQuery(q.getCombinedLists(classified
+				.getCategory().getCategoryWords(), classified.getAttributes()
+				.getAttributesWords()));
+		List<String> query9Terms = new ArrayList<String>();
+		for (String term : query9.split(" ")) {
+			query9Terms.add(term);
+		}
+
+		String query10 = q.combineQueries(newArrayList(query9, query4));
+		List<String> query10Terms = new ArrayList<String>();
+		for (String term : query10.split(" ")) {
+			query10Terms.add(term);
+		}
+
+		// List<String> discrTerms =
+		// removeDuplicatesAndLengthSmall(query1Terms);
+
+		// DescriptiveTerms descripTerms = new DescriptiveTerms(discrTerms);
+		// String query11 = q.getStringQuery(descripTerms.choose10Terms());
+
+		// List<String> query11Terms = descripTerms.choose10Terms();
+
+		String query;
+		List<String> queryTerms;
+		switch (choice) {
+		case 1:
+			query = query1;
+			queryTerms = query1Terms;
+			break;
+		case 2:
+			query = query2;
+			queryTerms = query2Terms;
+			break;
+		case 3:
+			query = query3;
+			queryTerms = query3Terms;
+			break;
+		case 4:
+			query = query4;
+			queryTerms = query4Terms;
+			break;
+		case 5:
+			query = query5;
+			break;
+		case 6:
+			query = query6;
+			break;
+		case 7:
+			query = query7;
+			break;
+		case 8:
+			query = query8;
+			break;
+		case 9:
+			query = query9;
+			queryTerms = query9Terms;
+			break;
+		case 10:
+			query = query10;
+			queryTerms = query10Terms;
+			break;
+		/*
+		 * case 11: query = query11; queryTerms = query11Terms; break;
+		 */
+		default:
+			throw new RuntimeException("Cannot create query with number "
+					+ choice);
+		}
+		return query;
 	}
 
 	public String getIndriResultsFolder() {
 		return this.indriResultsFolder;
 	}
+
 	public void setIndriResultsFolder(String folder) {
 		this.indriResultsFolder = folder;
 	}
@@ -461,6 +482,7 @@ public class Configuration {
 	public String getIndriScoresInputTable() {
 		return this.IndriResultsTable;
 	}
+
 	public void setIndriScoresInputTable(String table) {
 		this.IndriResultsTable = table;
 	}
@@ -468,7 +490,24 @@ public class Configuration {
 	public void setLocalPathToExternalDisk(String path) {
 		this.pathToDisk = path;
 	}
+
 	public String getLocalPathToExternalDisk() {
 		return this.pathToDisk;
+	}
+
+	public boolean isReadQueriesFromSGML() {
+		return readQueriesFromSGML;
+	}
+
+	public void setReadQueriesFromSGML(boolean readQueriesFromTable) {
+		this.readQueriesFromSGML = readQueriesFromTable;
+	}
+
+	public void setQueryChoice(int i) {
+		this.queryChoice = i;
+	}
+
+	public int getQueryChoice() {
+		return this.queryChoice;
 	}
 }

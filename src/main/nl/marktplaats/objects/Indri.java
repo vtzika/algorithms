@@ -19,10 +19,10 @@ public class Indri {
 	public HashMap<String, String> createQueryFromSGMLIndriQueryLanguage() {
 		HashMap<String, String> queries = new HashMap<String, String>();
 		FileNegotiations fileNego = new FileNegotiations();
-		System.out.println("Reading VIPs of folder : "+ fileNego.getListFiles(configuration.getSGMLFolder()));
+		System.out.println("Reading VIPs of folder : "+ configuration.getSGMLFolder());
 		for (String visitedClassified:fileNego.getListFiles(configuration.getSGMLFolder()))
 		{	
-			configuration.setClassifiedFile(configuration.getSGMLFolder()+visitedClassified);
+			configuration.setClassifiedFile(configuration.getSGMLFolder()+"/"+visitedClassified);
 			queries.put(visitedClassified, createQuery(configuration));
 		}
 		return queries;
@@ -32,6 +32,7 @@ public class Indri {
 		ClassifiedParser classifiedParser = new ClassifiedParser();
 		classifiedParser.setClassified(configuration.getClassifiedFile());
 		String query = configuration.setClassifiedForQuerying(classifiedParser.getClassified());
+		System.out.println(query);
 		return query;
 	}
 
