@@ -50,12 +50,11 @@ public class Main {
 		configuration.setVoyagerResultsTable("voyScores");
 		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/");
 		configuration.setIndexField(IndexedField.Title);
-/*
- * 		
-		configuration.setSearchEngine(SearchEngine.IndriOkapi);
-		configuration.setStatisticsTable("voyStatistics");
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
+		configuration.setSearchEngine(SearchEngine.Voyager);
+/*
+ * 		
 		configuration.setMMRTable("MMR");
 		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		configuration.setMmrMethod(MMRMethod.simpleMMR);
@@ -159,7 +158,7 @@ public class Main {
 		voyager.createQueryVoyagerQueryLanguage();
 		//voyager.runVoyagerQueries();
 		voyager.saveVoyagerResultsToTable();
-		//voyager.createInputFiles();
+		voyager.createInputFiles();
 		voyager.gatherStatistics();
 	}
 

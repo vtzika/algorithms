@@ -274,13 +274,12 @@ public class Voyager {
 							double rpm = sql.selectDoubleQuery("select rpm from ctrRpmScores where ad_id="+docsEntry.getKey()+";", configuration.getDb());
 							if(count<=10000)
 							{
-								System.out.println("("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'',"+getCTR(docsEntry.getKey())+","+getRPM(docsEntry.getKey())+"),'"+rpm+"','"+ctr+"");
-								insString+="("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'',"+getCTR(docsEntry.getKey())+","+getRPM(docsEntry.getKey())+"),'"+rpm+"','"+ctr+"";
+								insString+="("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'"+configuration.getQueryChoice()+"','"+configuration.getSystem()+"',"+ctr+","+rpm+"),";
 							}
 							else break;
 						}
 						
-						sql.insertQuery("insert into "+configuration.getVoyagerResultsTable()+" values "+insString+"(0,0,0,0,'',0.0,0.0);", configuration.getDb());
+						sql.insertQuery("insert into "+configuration.getVoyagerResultsTable()+" values "+insString+"(0,0,0,0,'"+configuration.getQueryChoice()+"','"+configuration.getSystem()+"',0.0,0.0);", configuration.getDb());
 						insString  = "";
 					}
 				}
@@ -458,6 +457,7 @@ public class Voyager {
 				break;
 			case Entire:
 				request+=configuration.getVoyagerRequest()+"Rank("+newQuery+")"+configuration.getPostFixVoyagerRequest();	
+				break;
 			default:
 				System.out.println("Check your IndexedField choice !!!!");
 				break;
