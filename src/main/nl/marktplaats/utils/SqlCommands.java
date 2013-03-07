@@ -20,7 +20,6 @@ public class SqlCommands {
 			statement.executeUpdate(query);
 			statement.close();
 			connection.close();
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

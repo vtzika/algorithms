@@ -159,7 +159,7 @@ public class FileNegotiations {
 		.createFile(inputtext, new String(path));
 	}
 
-	public void getResultsFromTxtAndSaveInDB(String file, String table, String db) {
+	public void getResultsFromTxtAndSaveInDB(String file, String table, String db, String queryChoice) {
 		SqlCommands sql = new SqlCommands();
 		try {
 			FileInputStream fstream = new FileInputStream(file);
@@ -170,7 +170,7 @@ public class FileNegotiations {
 				String[] words = strLine.split(" ");
 				sql.insertQuery("insert into " + table
 						+ " VALUES (" + words[0] + "," + words[2] + ","
-						+ words[4] + "," + '0' + ",'searchInEntire');",
+						+ words[4] + "," + words[3] + ", '"+queryChoice+"',0,0);",
 						db);
 			}
 			in.close();

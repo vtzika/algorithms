@@ -1,7 +1,6 @@
 package main.nl.marktplaats.objects;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +11,6 @@ import main.nl.marktplaats.utils.ClassifiedParser;
 import main.nl.marktplaats.utils.Configuration;
 import main.nl.marktplaats.utils.FileNegotiations;
 import main.nl.marktplaats.utils.ParameterFileCreator;
-import main.nl.marktplaats.utils.RetrievalMethod;
 import main.nl.marktplaats.utils.SqlCommands;
 import main.nl.marktplaats.utils.Statistics;
 public class Indri {
@@ -49,11 +47,11 @@ public class Indri {
 		return queries;
 	}
 	public void runIndriQueries() throws IOException {
+		System.out.println("Running Queries.....");
 		FileNegotiations fileNeg = new FileNegotiations();
 		for(String paramFile : fileNeg.getListFiles(configuration.getParameterFilesDirectory()))
 		{
 			String results = "";
-			System.out.println(configuration.getParameterFilesDirectory()+"/"+paramFile);
 			Process process = new ProcessBuilder(configuration.getIndriPath()+"runquery/IndriRunQuery", configuration.getParameterFilesDirectory()+"/"+paramFile).start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
@@ -63,6 +61,7 @@ public class Indri {
 			}
 			fileNeg.createFile(results, configuration.getIndriResultsFolder()+"/"+paramFile);
 		}
+		System.out.println("Files with results are saved on : "+configuration.getIndriResultsFolder());
 		}
 
 	public void saveIndriResultsToTable() {
@@ -70,8 +69,9 @@ public class Indri {
 		String file = configuration.getIndriResultsFolder();
 		for (String query:f.getListFiles(file))
 		{	
-			f.getResultsFromTxtAndSaveInDB(file+"/"+query,configuration.getIndriScoresInputTable(), configuration.getDb());
+			f.getResultsFromTxtAndSaveInDB(file+"/"+query,configuration.getIndriScoresInputTable(), configuration.getDb(), ""+configuration.getQueryChoice());
 		}
+		System.out.println("Results saved on : "+configuration.getIndriScoresInputTable());
 	}
 
 	public void gatherStatistics() {
@@ -81,15 +81,14 @@ public class Indri {
 
 	public void createParameterFiles(HashMap<String, String> queries) {
 		ParameterFileCreator parameterFile;
+		System.out.println("Creating Parameter Files....");
 		for(Entry<String, String> docNoAndQueries : queries.entrySet())
 		{
 			String docno = docNoAndQueries.getKey().replaceAll(".sgml", "");
 			parameterFile = new ParameterFileCreator(configuration, docNoAndQueries.getValue(), docno );
 			parameterFile.createFile();
-			
-			
 		}
-		
+		System.out.println("Parameter files are saved on : "+configuration.getParameterFilesDirectory());		
 	}
 
 }

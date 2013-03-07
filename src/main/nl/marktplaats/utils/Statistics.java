@@ -15,7 +15,7 @@ public class Statistics {
 	public void gatherStatistics() {
 		SqlCommands sql = new SqlCommands();
 		String db = configuration.getDb();
-		String table = configuration.getVoyagerResultsTable();
+		String table = configuration.getResultsTable();
 		for(int query:sql.selectListInt("select distinct(query) from "+table+" ;",db))
 		{			
 			double top5 =getTopXresults(table, 5, query, db, "CTR");
@@ -30,6 +30,7 @@ public class Statistics {
 			sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5+ ", "+top10+", "+top20+","+top100+",'CTR')", db);
 			sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5RPM+ ", "+top10RPM+", "+top20RPM+","+top100RPM+",'RPM')", db);
 		}
+		System.out.println("Statistics saved on "+configuration.getStatisticsTable());
 	}
 
 	private static double getTopXresults(String table, int i, int query, String db, String CTRorRPM ) {

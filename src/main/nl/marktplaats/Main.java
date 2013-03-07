@@ -35,7 +35,7 @@ public class Main {
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("tests");
 		configuration.setReadTable("queries");
-		configuration.setInputTable("voyRequests");
+		configuration.setInputTable("indriStatistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setSearchEngine(SearchEngine.IndriOkapi);
 		configuration.setExperiment(Experiment.IndriScores);
@@ -56,6 +56,7 @@ public class Main {
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
 		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
+		configuration.setIndriScoresInputTable("indriScores");
 		
 		return configuration;
 	}	
@@ -110,8 +111,8 @@ public class Main {
 			queries = indri.createQueryFromTableIndriQueryLanguage();
 		indri.createParameterFiles(queries);
 		indri.runIndriQueries();
-		//indri.saveIndriResultsToTable();
-		//indri.gatherStatistics();		
+		indri.saveIndriResultsToTable();
+		indri.gatherStatistics();		
 	}
 
 	private static void synonymsExperiment(Configuration configuration) throws Exception {

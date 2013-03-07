@@ -291,7 +291,8 @@ public class Configuration {
 		boolean d = checkIfHasStringValue("ParameterFileDirectory", this.parameterFileDirectory);
 		boolean e = checkIfHasStringValue("Indri Results Folder ", this.indriResultsFolder);
 		boolean f = checkIfHasStringValue("Indri Path Directory ", this.indriPath);
-		if (a && b && c && d && e && f)
+		boolean g = checkIfHasStringValue("Indri Results Table ", IndriResultsTable);
+		if (a && b && c && d && e && f && g)
 			return true;
 		else
 			return false;
@@ -523,6 +524,20 @@ public class Configuration {
 			return "tfidf";
 		default:
 			return null;
+		}
+	}
+
+	public String getResultsTable() {
+		switch (this.searchEngine) {
+		case Voyager:
+			return this.voyagerResultsTable;
+		case IndriOkapi:
+			return this.IndriResultsTable;
+		case IndriTfidf:
+			return this.IndriResultsTable;
+		default:
+			System.out.println("Choose Search Enginee !!!!!");
+			return "";
 		}
 	}
 }
