@@ -19,8 +19,6 @@ public class ParameterFileCreator {
 		this.configuration = c;
 		queryTerms = new ArrayList<String>();
 		this.docNo  = docno;
-		System.out.println(docno);
-		System.out.println(query);
 		for (String term:query.split(" ") )
 		{
 			queryTerms.add(term);

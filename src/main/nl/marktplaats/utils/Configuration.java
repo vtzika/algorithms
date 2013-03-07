@@ -289,7 +289,9 @@ public class Configuration {
 			b = checkIfHasStringValue("ReadTable ", this.readTable);
 		boolean c = checkIfItIsNumber("Query Choice", this.queryChoice);
 		boolean d = checkIfHasStringValue("ParameterFileDirectory", this.parameterFileDirectory);
-		if (a && b && c && d)
+		boolean e = checkIfHasStringValue("Indri Results Folder ", this.indriResultsFolder);
+		boolean f = checkIfHasStringValue("Indri Path Directory ", this.indriPath);
+		if (a && b && c && d && e && f)
 			return true;
 		else
 			return false;

@@ -1,5 +1,10 @@
 package main.nl.marktplaats.objects;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -43,20 +48,22 @@ public class Indri {
 		HashMap<String, String> queries = sql.selectHashMapStringStringQuery("select doc,query from "+configuration.getReadTable()+";", configuration.getDb());
 		return queries;
 	}
-	public void runIndriQueries() {
-		// TODO Auto-generated method stub
-		RetrievalMethod retrievalMethod = this.configuration.getRetrievalMethod();
-		switch(retrievalMethod){
-		case Okapi:
-			System.out.println("Okapi");
-			break;
-		case Tfidf:
-			System.out.println("TfIdf");
-			break;
-		default :
-			break;
+	public void runIndriQueries() throws IOException {
+		FileNegotiations fileNeg = new FileNegotiations();
+		for(String paramFile : fileNeg.getListFiles(configuration.getParameterFilesDirectory()))
+		{
+			String results = "";
+			System.out.println(configuration.getParameterFilesDirectory()+"/"+paramFile);
+			Process process = new ProcessBuilder(configuration.getIndriPath()+"runquery/IndriRunQuery", configuration.getParameterFilesDirectory()+"/"+paramFile).start();
+			InputStream is = process.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			while ((br.readLine()) != null) {
+				results+=br.readLine()+"\n";
+			}
+			fileNeg.createFile(results, configuration.getIndriResultsFolder()+"/"+paramFile);
 		}
-	}
+		}
 
 	public void saveIndriResultsToTable() {
 		FileNegotiations f = new FileNegotiations(); 

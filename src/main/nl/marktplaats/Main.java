@@ -54,6 +54,9 @@ public class Main {
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
 		configuration.setQueryChoice(1);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
+		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
+		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
+		
 		return configuration;
 	}	
 	
@@ -97,7 +100,7 @@ public class Main {
 		}
 		
 	}
-	private static void indriExperiments(Configuration configuration) {
+	private static void indriExperiments(Configuration configuration) throws IOException {
 		
 		Indri indri = new Indri(configuration);
 		HashMap<String,String> queries = new HashMap<String, String>();
@@ -106,7 +109,7 @@ public class Main {
 		else 
 			queries = indri.createQueryFromTableIndriQueryLanguage();
 		indri.createParameterFiles(queries);
-		//indri.runIndriQueries();
+		indri.runIndriQueries();
 		//indri.saveIndriResultsToTable();
 		//indri.gatherStatistics();		
 	}
