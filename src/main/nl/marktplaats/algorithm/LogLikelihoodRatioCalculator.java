@@ -102,7 +102,6 @@ public class LogLikelihoodRatioCalculator {
 					.gatherTermsAndFrequencies(docs);
 			HashMap<String, Float> llrResults = new HashMap<String, Float>();
 			for (Entry<String, Integer> term_freq : termsFreq.entrySet()) {
-				System.out.println(term_freq.getKey()+" => "+ term_freq.getValue());
 				llrResults.put(term_freq.getKey().toString(), this
 						.LLRCalculate(term_freq.getKey().toString(), termsFreq,
 								env));

@@ -53,7 +53,7 @@ public class Main {
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setInputTable("extendedQueries");
-		configuration.setAobMethod(AobMethod.PseudoL1);
+		configuration.setAobMethod(AobMethod.llrL2);
 		
 /*
  * 		

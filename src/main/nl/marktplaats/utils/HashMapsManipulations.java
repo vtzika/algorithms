@@ -47,7 +47,6 @@ public class HashMapsManipulations {
 	public HashMap<String, Integer> gatherTermsAndFrequencies(List<Long> docs) {
 		HashMap<String, Integer> term_freq = new HashMap<String, Integer>();
 		for (Long doc : docs) {
-			System.out.println(doc);
 			SqlCommands sql = new SqlCommands();
 			String text = sql.selectStringQuery(
 					"select title,description from ads where id=" + doc + ";",

@@ -26,14 +26,14 @@ public class LLRDisciminativeTermsL2 extends ExtendQuery {
 		SqlCommands sql = new SqlCommands();
 		QueryEnvironment env = new QueryEnvironment();
 		int l1 = sql.selectIntQuery("select distinct(parent_id) from categories where category_id=(select distinct(category_id) from ads where id="+super.getQuery().getQID()+");", "cas_ads");
+		int l2 = sql.selectIntQuery("select category_id from ads where id="+super.getQuery().getQID()+";", "cas_ads");
 		if(l1>0)
 		{
-		env.addIndex("/media/Data/Coen/repositories/repositoriesL1/"+l1+"/");
-		HashMapsManipulations hashMan = new HashMapsManipulations() ;
-		List<Long> docs = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select id,CTR from allL2AndCTR where l2="+super.getQuery().getQID(),"cas_ads"));
-		LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
-		results = llr.calculateLLRDocsList(docs, env);
-		System.out.println(results);
+			env.addIndex("/media/Data/Coen/repositories/repositoriesL1/"+l1+"/");
+			HashMapsManipulations hashMan = new HashMapsManipulations() ;
+			List<Long> docs = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select id,CTR from allL2AndCTR where l2="+l2,"cas_ads"));
+			LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
+			results = llr.calculateLLRDocsList(docs, env);
 		}
 
 		return new Query(super.getQuery().getQID(),results);
