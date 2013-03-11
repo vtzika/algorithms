@@ -304,7 +304,6 @@ public class Configuration {
 	}
 
 	public boolean checkIndriConfiguration() {
-		// TODO IndriRetrievalMethod
 		boolean a = checkIfHasStringValue("DB ", this.db);
 		boolean b = false;
 		if (isReadQueriesFromSGML())
@@ -330,6 +329,12 @@ public class Configuration {
 	private boolean checkIfSearchEngineeIsNull(String fieldsName, SearchEngine fieldsValue) {
 		if(fieldsValue==null)
 		return false;
+		else if(fieldsValue.equals(SearchEngine.Voyager))
+		{
+			System.out.println("Search Enginee changed to IndriTfidf");
+			this.searchEngine = SearchEngine.IndriTfidf;
+			return true;
+		}
 		else return true;
 	}
 
@@ -554,11 +559,12 @@ public class Configuration {
 		SearchEngine se = this.searchEngine;
 		switch (se) {
 		case IndriOkapi:
-			return "okapi";
+			return "<baseline>okapi,k1:1.0,b:0.3</baseline>";
 		case IndriTfidf:
-			return "tfidf";
+			return "<baseline>tfidf,k1:1.2,b:0.75</baseline>";
 		default:
-			return null;
+			System.out.println("Choose SearchEnginee otherwise Indri will run Tfidf k1:1.2,b:0.75");
+			return "<baseline>tfidf,k1:1.2,b:0.75</baseline>";
 		}
 	}
 

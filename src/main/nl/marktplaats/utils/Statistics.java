@@ -13,25 +13,33 @@ public class Statistics {
 	}
 
 	public void gatherStatistics() {
-		SqlCommands sql = new SqlCommands();
-		String db = configuration.getDb();
-		String table = configuration.getResultsTable();
-		String experiment = configuration.getSystem();
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where experiment="+experiment+" ;",db))
-		{			
-			double top5 =getTopXresults(table, 5, query, db, "CTR");
-			double top10 =getTopXresults(table, 10, query, db, "CTR");
-			double top20 =getTopXresults(table, 20, query, db, "CTR");
-			double top100 =getTopXresults(table, 100, query, db, "CTR");
-
-			double top5RPM =getTopXresults(table, 5, query, db, "RPM");
-			double top10RPM =getTopXresults(table, 10, query, db, "RPM");
-			double top20RPM =getTopXresults(table, 20, query, db, "RPM");
-			double top100RPM =getTopXresults(table, 100, query, db, "RPM");
-			sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5+ ", "+top10+", "+top20+","+top100+",'CTR','"+configuration.getSystem()+"')", db);
-			sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5RPM+ ", "+top10RPM+", "+top20RPM+","+top100RPM+",'RPM','"+configuration.getSystem()+"')", db);
+		
+		try{
+			SqlCommands sql = new SqlCommands();
+			String db = configuration.getDb();
+			String table = configuration.getResultsTable();
+			String experiment = configuration.getSystem();
+			System.out.println(table);
+			for(int query:sql.selectListInt("select distinct(query) from "+table+" where experiment="+experiment+" ;",db))
+			{			
+				System.out.println(query);
+				double top5 =getTopXresults(table, 5, query, db, "CTR");
+				double top10 =getTopXresults(table, 10, query, db, "CTR");
+				double top20 =getTopXresults(table, 20, query, db, "CTR");
+				double top100 =getTopXresults(table, 100, query, db, "CTR");
+	
+				double top5RPM =getTopXresults(table, 5, query, db, "RPM");
+				double top10RPM =getTopXresults(table, 10, query, db, "RPM");
+				double top20RPM =getTopXresults(table, 20, query, db, "RPM");
+				double top100RPM =getTopXresults(table, 100, query, db, "RPM");
+				sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5+ ", "+top10+", "+top20+","+top100+",'CTR','"+configuration.getSystem()+"')", db);
+				sql.insertQuery("insert into "+configuration.getStatisticsTable()+" values ("+query +", "+top5RPM+ ", "+top10RPM+", "+top20RPM+","+top100RPM+",'RPM','"+configuration.getSystem()+"')", db);
+			}
+			System.out.println("Statistics saved on "+configuration.getStatisticsTable());
 		}
-		System.out.println("Statistics saved on "+configuration.getStatisticsTable());
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	private static double getTopXresults(String ctrTable, int i, int query, String db, String CTRorRPM ) {

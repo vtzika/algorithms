@@ -65,10 +65,12 @@ public class Indri {
 		}
 
 	public void saveIndriResultsToTable() {
+		System.out.println("Saving Results on table:"+configuration.getIndriScoresInputTable());
 		FileNegotiations f = new FileNegotiations(); 
 		String file = configuration.getIndriResultsFolder();
 		for (String query:f.getListFiles(file))
 		{	
+			System.out.println(query);
 			f.getResultsFromTxtAndSaveInDB(file+"/"+query,configuration.getIndriScoresInputTable(), configuration.getDb(), ""+configuration.getQueryChoice(), configuration.getSystem());
 		}
 		System.out.println("Results saved on : "+configuration.getIndriScoresInputTable());

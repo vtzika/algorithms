@@ -33,17 +33,17 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.VoyagerScores);
+		configuration.setExperiment(Experiment.IndriScores);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
-		configuration.setReadQueriesFromSGML(true);
-		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/VIP/Unstemmed/Entire");
+		configuration.setReadQueriesFromSGML(false);
+		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
 		configuration.setQueryChoice(1);
 		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
 		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
 		configuration.setIndriScoresInputTable("indriScores");
 		configuration.setReadTable("queries");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
-		configuration.setSearchEngine(SearchEngine.Voyager);
+		configuration.setSearchEngine(SearchEngine.IndriOkapi);
 		configuration.setStatisticsTable("statistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setTrecInputFolder("/src/resources/trecResults/tests/test");
@@ -112,7 +112,7 @@ public class Main {
 		HashMap<String,String> queries = new HashMap<String, String>();
 		if(configuration.isReadQueriesFromSGML())
 			queries = indri.createQueryFromSGMLIndriQueryLanguage();
-		else 
+		else
 			queries = indri.createQueryFromTableIndriQueryLanguage();
 		indri.createParameterFiles(queries);
 		indri.runIndriQueries();

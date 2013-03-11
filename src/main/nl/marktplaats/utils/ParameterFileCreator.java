@@ -28,18 +28,17 @@ public class ParameterFileCreator {
 	public boolean createFile() {
 		String query = takeQueryString();
 		String repositories = "";
+		String countString = "<count> 100 </count>";
 		String inputText = "";
-		String trecFormat = "\n <trecFormat>true</trecFormat>";
-		String queryNumber = query+"\n<number>" + docNo + "</number>\n</query>";
+		String trecFormat = " <trecFormat>true</trecFormat>";
+		String queryNumber = query+"<number>" + docNo + "</number>\n</query>";
 		for (String repository : configuration.getRepositories()) {
 			repositories = repositories + "\n <index>"
-					+ configuration.getRepositoryPath() + "/" + repository
+					+ configuration.getRepositoryPath() + repository
 					+ "</index>";
 		}
-		String baseline = null;
-		String countString = null;
-		inputText = "<parameters> \n " + repositories + "\n" + queryNumber
-				+ baseline + "\n" + countString + "\n" + trecFormat;
+		String baseline = configuration.getBaseline();
+		inputText = "<parameters> \n " + repositories + "\n" + queryNumber + "\n" + baseline + "\n" + countString + "\n" + trecFormat;
 		Writer output = null;
 		File file = new File(configuration.getParameterFilesDirectory()+"/"+docNo);
 		String finalText = inputText + "\n </parameters>";
@@ -59,7 +58,7 @@ public class ParameterFileCreator {
 		for (String term : queryTerms) {
 			query += term + " ";
 		}
-		return query + "</text>\n";
+		return query.replace("#combine( 	 	 ", "").replace("    	 )", "") + "</text>\n";
 	}
 
 	public void runRetrievalModel() throws Throwable {
