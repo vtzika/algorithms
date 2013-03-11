@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.filechooser.FileSystemView;
+
 
 import lemurproject.indri.ParsedDocument;
 import lemurproject.indri.QueryEnvironment;
@@ -252,6 +254,7 @@ public class Voyager {
 			}
 		}
 		public void parseVoyagerResults(String file) {
+
 			try {
 				SqlCommands sql = new SqlCommands();
 				int count = 0; 
@@ -274,7 +277,8 @@ public class Voyager {
 							double rpm = sql.selectDoubleQuery("select rpm from ctrRpmScores where ad_id="+docsEntry.getKey()+";", configuration.getDb());
 							if(count<=10000)
 							{
-								insString+="("+file.replaceAll("[a-zA-Z]|:|/", "")+","+docsEntry.getKey() +","+score+","+seq+",'"+configuration.getQueryChoice()+"','"+configuration.getSystem()+"',"+ctr+","+rpm+"),";
+								String newFile = file.replaceAll("[^x0-9]", "");
+								insString+="("+newFile+","+docsEntry.getKey() +","+score+","+seq+",'"+configuration.getQueryChoice()+"','"+configuration.getSystem()+"',"+ctr+","+rpm+"),";
 							}
 							else break;
 						}
@@ -437,11 +441,11 @@ public class Voyager {
 			SqlCommands sql = new SqlCommands();
 			StringManipulation stringMan = new StringManipulation();
 			System.out.println("Reading queries of table "+configuration.getReadTable());
-			for(Entry<Long,String> queryEntry:sql.selectHashMapLongStringQuery("select doc,query from "+configuration.getReadTable()+";", configuration.getDb()).entrySet())
+			for(Entry<Long,String> queryEntry:sql.selectHashMapLongStringQuery("select doc,query from "+configuration.getReadTable()+" where experiment="+configuration.getSystem()+";", configuration.getDb()).entrySet())
 			{
 				String newQuery = stringMan.getStringSeparatedByCommas(queryEntry.getValue());
 				String request = getVoyagerRequest(newQuery);
-				sql.insertQuery("insert into "+configuration.getVoyagerQueriesTable()+" values("+queryEntry.getKey()+",'"+request+"','"+configuration.getIndexField()+"');", configuration.getDb());
+				sql.insertQuery("insert into "+configuration.getVoyagerQueriesTable()+" values("+queryEntry.getKey()+",'"+request+"','"+configuration.getIndexField()+"',"+configuration.getSystem()+");", configuration.getDb());
 			}
 			System.out.println("Queries requests saved on "+configuration.getVoyagerQueriesTable());}
 
@@ -467,12 +471,13 @@ public class Voyager {
 		}
 
 		public void runVoyagerQueries() throws IOException {
-			Process process = new ProcessBuilder("/media/Data/Coen/scripts/voyagerCallsFromEclipse.sh").start();
+			String currentDir =new java.io.File(".").getCanonicalPath();
+			Process process = new ProcessBuilder(currentDir+"/src/resources/scripts/voyagerCallsFromEclipseNew.sh",configuration.getVoyagerResultsFolder(), configuration.getSystem()).start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			while ((br.readLine()) != null) {
-				//System.out.println(line);
+				System.out.println(br.readLine());
 			}
 	
 		}
@@ -482,9 +487,10 @@ public class Voyager {
 			parseResults();	
 		}
 
-		public void createInputFiles() {
+		public void createInputFiles() throws IOException {
 			FileNegotiations fileNego = new FileNegotiations();
-			fileNego.createInputForTrec(configuration.getTrecInputFolder(), configuration.getDb(), "", configuration.getVoyagerResultsTable());
+			String currentDir =new java.io.File(".").getCanonicalPath();
+			fileNego.createInputForTrec(currentDir+configuration.getTrecInputFolder(), configuration.getDb(), configuration.getSystem(), configuration.getVoyagerResultsTable());
 		}
 
 		public void getMetrics() {

@@ -130,11 +130,11 @@ public class FileNegotiations {
 	}
 	
 	public void createInputForTrec(String pathFolder, String db, String system, String table) {
-		String path = pathFolder+system+".txt";
+		String path = pathFolder+".txt";
 		ResultSet rs;
 		String inputtext = "";
 		SqlCommands sql = new SqlCommands();
-		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" ;",db);
+		List<Long> queries = sql.selectListLong("select distinct(query) from "+table+" where experiment="+system+";",db);
 		for(Long query:queries)
 		{
 		try {
@@ -143,7 +143,7 @@ public class FileNegotiations {
 			Connection connection = DriverManager.getConnection(connectionURL,
 					"root", "qwe123");
 			Statement statement = connection.createStatement(); 
-			String QueryString = "select distinct query,docs,score,sequence from "+table+" where  query="+query+" and sequence<100 order by sequence;"; 
+			String QueryString = "select distinct query,docs,score,sequence from "+table+" where  query="+query+" and experiment ="+system+" and sequence<100 order by sequence;"; 
 			rs = statement.executeQuery(QueryString);
 			while (rs.next()) {
 				inputtext = inputtext + rs.getInt(1) + " Q0 " + rs.getLong(2) + " "+ rs.getInt(4) + " " + rs.getDouble(3)+ " indri\n";
