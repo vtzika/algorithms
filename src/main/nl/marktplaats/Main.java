@@ -30,7 +30,7 @@ public class Main {
 	 */
 	private static Configuration createConfiguration() throws Exception {
 		Configuration configuration = new Configuration();
-		String pathToDisk = "../";
+		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
 		configuration.setExperiment(Experiment.VoyagerScores);
@@ -48,7 +48,7 @@ public class Main {
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setTrecInputFolder("/src/resources/trecResults/tests/test");
 		configuration.setVoyagerResultsTable("voyScores");
-		configuration.setVoyagerResultsFolder(pathToDisk+"Results/similarItems/voyager/Title");
+		configuration.setVoyagerResultsFolder(pathToDisk+"/Results/similarItems/Title/");
 		configuration.setIndexField(IndexedField.Description);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
@@ -154,11 +154,11 @@ public class Main {
 
 	private static void voyagerExperiments(Configuration configuration) throws IOException {
 		Voyager voyager = new Voyager(configuration);
-		//voyager.createQueryVoyagerQueryLanguage();
-		//voyager.runVoyagerQueries();
-		//voyager.saveVoyagerResultsToTable();
+		voyager.createQueryVoyagerQueryLanguage();
+		voyager.runVoyagerQueries();
+		voyager.saveVoyagerResultsToTable();
 		voyager.createInputFiles();
-		//voyager.gatherStatistics();
+		voyager.gatherStatistics();
 	}
 
 	private static void llr(Configuration configuration) throws Exception {
