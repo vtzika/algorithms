@@ -21,9 +21,10 @@ public class PseudoRelevanceFeedback {
 		SqlCommands sql = new SqlCommands();
 		String newExtQuery = "";
 		for(int id:cat_ids)
-		{	HashMapsManipulations hashMan = new HashMapsManipulations() ;
-			List<Long> maxCTRAds = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select id,CTR from allL2AndCTR where l2="+id,"tests"));
-			sql.insertQuery("insert into topCTRL2 values ("+id+","+maxCTRAds.get(0)+","+maxCTRAds.get(1)+","+maxCTRAds.get(2)+","+maxCTRAds.get(3)+","+maxCTRAds.get(4)+");","tests");
+		{	
+			HashMapsManipulations hashMan = new HashMapsManipulations() ;
+			List<Long> maxCTRAds = hashMan.getMaxCTRFromAds(sql.selectHashMapLongDoubbleQuery("select id,CTR from allL2AndCTR where l2="+id,"algorithms"));
+			sql.insertQuery("insert into topCTRL2 values ("+id+","+maxCTRAds.get(0)+","+maxCTRAds.get(1)+","+maxCTRAds.get(2)+","+maxCTRAds.get(3)+","+maxCTRAds.get(4)+");","algorithms");
 			String newQuery = calculateNewQueryFromFrequencies(maxCTRAds);
 			sql.insertQuery("insert into extendedQueriesInL1Browse values ("+id+",'"+newQuery+"');","tests");
 			newExtQuery+=newQuery;

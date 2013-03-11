@@ -33,7 +33,7 @@ public class LLRDisciminativeTermsL1 extends ExtendQuery {
 		SqlCommands sql = new SqlCommands();
 		HashMapsManipulations hashMan = new HashMapsManipulations();
 		HashMap<Long, Double> adsAndCTR = new HashMap<Long, Double>();
-		for(int l2 : sql.selectListInt("select category_id from categories where parent_id="+super.getQuery().getQID()+";", "cas_ads"))
+		for(int l2 : sql.selectListInt("select category_id from categories where parent_id=(select distinct(parent_id) from categories where category_id in (select category_id from ads where id="+super.getQuery().getQID()+" ));", "cas_ads"))
 		{
 			for(long ad : sql.selectListLong("select id from ads where category_id="+l2+";", "cas_ads"))
 			{

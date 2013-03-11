@@ -21,6 +21,7 @@ public class PseudoL2Extention extends ExtendQuery {
 		l2.add(sql.selectIntQuery("select category_id from ads where id="+(int) super.getQuery().getQID().longValue()+";", "cas_ad_service"));
 		String newQuery = pseudo.findBiggestCTRAndCreateNewQueries(l2);
 		Query query = new Query(super.getQuery().getQID(), newQuery );
+		System.out.println("New Query : "+query);
 		return query;
 		
 	}

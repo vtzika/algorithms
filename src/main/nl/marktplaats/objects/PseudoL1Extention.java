@@ -25,6 +25,6 @@ public class PseudoL1Extention extends ExtendQuery {
 
 	private List<Integer> findAllL2InL1() {
 		SqlCommands sql = new SqlCommands();
-		return sql.selectListInt("select distinct(category_id) from categories where category_id="+super.getQuery().getQID()+" ;", "cas_ad_service");
+		return sql.selectListInt("select distinct(category_id) from categories where category_id in (select category_id from ads where id=" +super.getQuery().getQID()+");", "cas_ad_service");
 	}
 }

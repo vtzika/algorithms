@@ -236,21 +236,21 @@ public class Configuration {
 	}
 
 	public boolean checkVoyagerConfiguration() {
-		boolean a = checkIfHasStringValue("DB ", this.db);
-		boolean b = checkIfHasStringValue("ReadTable ", this.readTable);
-		boolean c = checkIfHasStringValue("voyagerQueriesTable ",
+		boolean a = checkIfHasStringValue("DB : "+this.db+" ", this.db);
+		boolean b = checkIfHasStringValue("ReadTable : "+this.readTable+" ", this.readTable);
+		boolean c = checkIfHasStringValue("voyagerQueriesTable : "+this.voyagerQueriesTable+" ",
 				this.voyagerQueriesTable);
-		boolean d = checkIfIndexFieldIsNull("IndexField ",this.indexField);
-		boolean e = checkIfHasStringValue("VoyagerResultsFolder ",
+		boolean d = checkIfIndexFieldIsNull("IndexField : "+this.indexField+" ",this.indexField);
+		boolean e = checkIfHasStringValue("VoyagerResultsFolder : "+this.voyagerResultsFolder+" ",
 				this.voyagerResultsFolder);
-		boolean f = checkIfHasStringValue("VoyagerResultsTable ",
+		boolean f = checkIfHasStringValue("VoyagerResultsTable : "+this.voyagerResultsTable+" ",
 				this.voyagerResultsTable);
-		boolean g = checkIfHasStringValue("trecInputFolder ",
+		boolean g = checkIfHasStringValue("trecInputFolder : "+this.trecInputFolder+" ",
 				this.trecInputFolder);
-		boolean h = checkIfHasStringValue("statisticsTable  ",
+		boolean h = checkIfHasStringValue("statisticsTable : "+this.statisticsTable+" ",
 				this.statisticsTable);
 
-		if (a && b && c  && e && f && g && h)
+		if (a && b && c && e && f && g && h)
 			return true;
 		else
 			return false;
@@ -264,9 +264,9 @@ public class Configuration {
 	}
 
 	public boolean checkAobConfiguration() {
-		boolean a = checkIfHasStringValue("DB ", this.db);
-		boolean b = checkIfHasStringValue("ReadTable ", this.readTable);
-		boolean d = checkIfHasStringValue("InputTable ", this.inputTable);
+		boolean a = checkIfHasStringValue("DB : "+ this.db +" ", this.db);
+		boolean b = checkIfHasStringValue("ReadTable : "+this.readTable+" ", this.readTable);
+		boolean d = checkIfHasStringValue("InputTable : "+this.inputTable+" ", this.inputTable);
 
 		if (a && b && d)
 			return true;
@@ -275,9 +275,9 @@ public class Configuration {
 	}
 
 	public boolean checkMMRConfiguration() {
-		boolean a = checkIfHasStringValue("DB ", this.db);
-		boolean b = checkIfHasStringValue("ReadTable ", this.readTable);
-		boolean d = checkIfHasStringValue("inputMMRTable ", this.inputMMRTable);
+		boolean a = checkIfHasStringValue("DB : "+ this.db +" ", this.db);
+		boolean b = checkIfHasStringValue("ReadTable : "+this.readTable+" ", this.readTable);
+		boolean d = checkIfHasStringValue("inputMMRTable : "+this.inputMMRTable+" ", this.inputMMRTable);
 
 		if (a && b && d)
 			return true;
@@ -304,22 +304,22 @@ public class Configuration {
 	}
 
 	public boolean checkIndriConfiguration() {
-		boolean a = checkIfHasStringValue("DB ", this.db);
+		boolean a = checkIfHasStringValue("DB : "+this.db, this.db);
 		boolean b = false;
 		if (isReadQueriesFromSGML())
-			b = checkIfHasStringValue("SGMLFolder ", this.VIPFolder);
+			b = checkIfHasStringValue("SGMLFolder : "+this.VIPFolder+" ", this.VIPFolder);
 		else
-			b = checkIfHasStringValue("ReadTable ", this.readTable);
-		boolean c = checkIfItIsNumber("Query Choice", this.queryChoice);
-		boolean d = checkIfHasStringValue("ParameterFileDirectory",
+			b = checkIfHasStringValue("ReadTable : "+this.readTable+" ", this.readTable);
+		boolean c = checkIfItIsNumber("Query Choice : "+this.queryChoice+" ", this.queryChoice);
+		boolean d = checkIfHasStringValue("ParameterFileDirectory : "+this.parameterFileDirectory,
 				this.parameterFileDirectory);
-		boolean e = checkIfHasStringValue("Indri Results Folder ",
+		boolean e = checkIfHasStringValue("Indri Results Folder : "+this.indriResultsFolder+" ",
 				this.indriResultsFolder);
-		boolean f = checkIfHasStringValue("Indri Path Directory ",
+		boolean f = checkIfHasStringValue("Indri Path Directory : "+this.indriPath+" ",
 				this.indriPath);
-		boolean g = checkIfHasStringValue("Indri Results Table ",
-				IndriResultsTable);
-		boolean h = checkIfSearchEngineeIsNull("SearchEnginee ", this.searchEngine);
+		boolean g = checkIfHasStringValue("Indri Results Table : "+this.IndriResultsTable,
+				this.IndriResultsTable);
+		boolean h = checkIfSearchEngineeIsNull("SearchEnginee : "+this.searchEngine+" ", this.searchEngine);
 		if (a && b && c && d && e && f && g && h)
 			return true;
 		else

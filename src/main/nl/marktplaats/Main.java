@@ -33,7 +33,7 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.IndriScores);
+		configuration.setExperiment(Experiment.Aob);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setReadQueriesFromSGML(false);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
@@ -52,6 +52,9 @@ public class Main {
 		configuration.setIndexField(IndexedField.Description);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
+		configuration.setInputTable("extendedQueries");
+		configuration.setAobMethod(AobMethod.PseudoL1);
+		
 /*
  * 		
 		configuration.setMMRTable("MMR");
@@ -175,19 +178,22 @@ public class Main {
 
 	private static void aob(Configuration configuration) throws Exception {
 			SqlCommands sql = new SqlCommands();
+			System.out.println("Reading original queries from "+configuration.getReadTable()+"....");
 			HashMap<Long,String> queries = sql.selectHashMapQuery("select doc,query from "+configuration.getReadTable()+";",configuration.getDb());
+			System.out.println("Extending queries .....");
 			for(Entry<Long, String> query: queries.entrySet())
 			{	
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());
 				newQuery.saveResults(configuration);
 			}
+			System.out.println("Results saved on : "+configuration.getInputTable());
 	}
 
 	private static ExtendQuery getExtendQueryType(Configuration configuration, Long id, String qString) throws Exception {
 		ExtendQuery newQuery;
 		if(configuration.getAobMethod()==null)
 		{
-			System.out.println("Please, give me Aob method for extention :D !!!!!");
+			System.out.println("Please, give me Aob method for extention grrrrrrr !!!!!");
 			return null;
 		}
 		switch (configuration.getAobMethod()) {
