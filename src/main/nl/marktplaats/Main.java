@@ -33,7 +33,7 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.Diversification);
+		configuration.setExperiment(Experiment.LLR);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setReadQueriesFromSGML(false);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
@@ -90,10 +90,10 @@ public class Main {
 				diversificationExperiment(configuration);
 			break;
 		}
-		case Synonyms:
+		case LLR:
 			boolean checkSynonyms = configuration.checkSynonymsConfiguration();
 			if(checkSynonyms)
-				synonymsExperiment(configuration);
+				llrExperiment(configuration);
 			break;
 		case IndriScores:
 			boolean checkIndri = configuration.checkIndriConfiguration();
@@ -120,7 +120,7 @@ public class Main {
 		indri.gatherStatistics();		
 	}
 
-	private static void synonymsExperiment(Configuration configuration) throws Exception {
+	private static void llrExperiment(Configuration configuration) throws Exception {
 		llr(configuration);		
 	}
 
@@ -163,7 +163,7 @@ public class Main {
 
 	private static void llr(Configuration configuration) throws Exception {
 		SqlCommands sql = new SqlCommands();
-		HashMap<Long, String> docsQueries = sql.selectHashMapLongStringQuery("select doc,query from queries",configuration.getDb());
+		HashMap<Long, String> docsQueries = sql.selectHashMapLongStringQuery("select doc,query from queries where experiment="+configuration.getSystem(),configuration.getDb());
 		LogLikelihoodRatioCalculator llr = new LogLikelihoodRatioCalculator();
 		for(Entry<Long,String> docQuery : docsQueries.entrySet())
 		{
@@ -217,7 +217,6 @@ public class Main {
 			System.out.println("Please, give me a correct Aob method for extention :D !!!!!");
 			break;
 		}
-		
 		return newQuery;
 	}
 	

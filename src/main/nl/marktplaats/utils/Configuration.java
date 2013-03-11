@@ -138,7 +138,7 @@ public class Configuration {
 		case Diversification:
 			setSystem("3");
 			break;
-		case Synonyms:
+		case LLR:
 			setSystem("4");
 			break;
 		case IndriScores:
