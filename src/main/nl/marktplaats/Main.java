@@ -43,7 +43,7 @@ public class Main {
 		configuration.setIndriScoresInputTable("indriScores");
 		configuration.setReadTable("queries");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
-		configuration.setSearchEngine(SearchEngine.Voyager);
+		configuration.setSearchEngine(SearchEngine.IndriOkapi);
 		configuration.setStatisticsTable("statistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setTrecInputFolder("/src/resources/trecResults/tests/test");
