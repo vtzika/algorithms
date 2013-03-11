@@ -30,6 +30,7 @@ public class Diversification {
 	public void diversificationSimple() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
+		System.out.println("Reading original results from "+table);
 		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+" );",db))
 		{
 			int count = 0;
@@ -57,7 +58,7 @@ public class Diversification {
 				double maxCosineSimilarity = getMaxCs(cos_sims) ;
 				double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * maxCosineSimilarity;
 				count++;
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(i)+","+mmr+","+count+");",db);
+				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(i)+","+mmr+","+count+",'diversificationSimple');",db);
 				
 			}
 		} 
@@ -73,7 +74,7 @@ public class Diversification {
 			int count = 0;
 			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
 			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";",db);
-			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+","+count+");",db);
+			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+","+count+",'alternativeDiversification');",db);
 			Long alreadyCompared = ids.get(0);
 			ids.remove(0);
 			while(ids.size()>0)
@@ -94,7 +95,6 @@ public class Diversification {
 				{
 					c_s = cs.calculateCosineSimilarity();
 					cos_sims.put(ids.get(j),c_s);
-					System.out.println(ids.get(j));
 					sql.insertQuery("insert into cosSim Values("+ids.get(j)+","+ alreadyCompared+","+cs.getDoc1().getScore()+","+c_s+");",db);
 				}
 					Document doc1 = new Document(db,ids.get(j), query, table, env);
@@ -104,7 +104,7 @@ public class Diversification {
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
 					count++;
-					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+count+");",db);
+					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+count+",'alternativeDiversification');",db);
 					alreadyCompared = maxMMRid;
 					int removableIndex = 0 ;
 					for(int i=0;i<ids.size();i++)
@@ -131,7 +131,7 @@ public class Diversification {
 			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
 			List<Long> displayedIds = new ArrayList<Long>();
 			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1);",db);
+			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversification2');",db);
 			Long alreadyCompared = ids.get(0);
 			displayedIds.add(alreadyCompared);
 			ids.remove(0);
@@ -147,7 +147,7 @@ public class Diversification {
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
 					count++;
-					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+");",db);
+					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversification2');",db);
 					alreadyCompared = maxMMRid;
 					displayedIds.add(alreadyCompared);
 					int removableIndex = 0 ;
@@ -175,7 +175,7 @@ public class Diversification {
 				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;", db);
 				List<Long> displayedIds = new ArrayList<Long>();
 				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1);",db);
+				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4');",db);
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -199,7 +199,7 @@ public class Diversification {
 						}
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+");",db);
+						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4');",db);
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;
@@ -228,7 +228,7 @@ public class Diversification {
 				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
 				List<Long> displayedIds = new ArrayList<Long>();
 				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1);",db);
+				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10Next');",db);
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -251,7 +251,7 @@ public class Diversification {
 						}
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+");", db);
+						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10Next');", db);
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;
@@ -280,7 +280,7 @@ public class Diversification {
 				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
 				List<Long> displayedIds = new ArrayList<Long>();
 				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1);",db);
+				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10NextAndFine');",db);
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -307,7 +307,7 @@ public class Diversification {
 						
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+");",db);
+						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10NextAndFine');",db);
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;

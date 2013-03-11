@@ -33,7 +33,7 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.Aob);
+		configuration.setExperiment(Experiment.Diversification);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setReadQueriesFromSGML(false);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
@@ -41,7 +41,7 @@ public class Main {
 		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
 		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
 		configuration.setIndriScoresInputTable("indriScores");
-		configuration.setReadTable("queries");
+		configuration.setReadTable("voyScores");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
 		configuration.setSearchEngine(SearchEngine.IndriOkapi);
 		configuration.setStatisticsTable("statistics");
@@ -54,14 +54,11 @@ public class Main {
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
 		configuration.setInputTable("extendedQueries");
 		configuration.setAobMethod(AobMethod.llrL2);
-		
-/*
- * 		
 		configuration.setMMRTable("MMR");
-		configuration.setAobMethod(AobMethod.AnalyticsL1);
 		configuration.setMmrMethod(MMRMethod.simpleMMR);
 		
- */
+		
+
 		
 		return configuration;
 	}	
