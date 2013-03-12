@@ -33,7 +33,7 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.LLR);
+		configuration.setExperiment(Experiment.Aob);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setReadQueriesFromSGML(false);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
@@ -41,9 +41,9 @@ public class Main {
 		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
 		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
 		configuration.setIndriScoresInputTable("indriScores");
-		configuration.setReadTable("voyScores");
+		configuration.setReadTable("queries");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
-		configuration.setSearchEngine(SearchEngine.IndriOkapi);
+		configuration.setSearchEngine(SearchEngine.Voyager);
 		configuration.setStatisticsTable("statistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setTrecInputFolder("/src/resources/trecResults/tests/test");
@@ -126,30 +126,7 @@ public class Main {
 
 	private static void diversificationExperiment(Configuration configuration) throws Exception {
 		Diversification diversification = new Diversification(configuration);
-		MMRMethod mmrMethod = configuration.getMmrMethod();
-		switch (mmrMethod) {
-		case simpleMMR:
-			diversification.diversificationSimple();
-			break;
-		case altAllMMR:
-			diversification.alternativeDiversification();
-			break;
-		case altLastOneMMR:
-			diversification.alternativeDiversification2();
-			break;
-		case altLastFourMMR:
-			diversification.alternativeDiversificationLast4();
-			break;
-		case altLastFourTenNextMMR:
-			diversification.alternativeDiversificationLast4With10Next();
-			break;
-		case altMMRwithFine:
-			diversification.alternativeDiversificationLast4With10NextAndFine();
-			break;
-		default:
-			break;
-		}
-		diversification.alternativeDiversification();
+		diversification.diversificationNew();
 	}
 
 	private static void voyagerExperiments(Configuration configuration) throws IOException {
@@ -183,7 +160,19 @@ public class Main {
 				ExtendQuery newQuery = getExtendQueryType(configuration, query.getKey(), query.getValue());
 				newQuery.saveResults(configuration);
 			}
-			System.out.println("Results saved on : "+configuration.getInputTable());
+			System.out.println("Extended queries are saved on : "+configuration.getInputTable());
+			switch (configuration.getSearchEngine()) {
+			case Voyager:
+				configuration.setReadTable(configuration.getInputTable());
+				configuration.setExperiment(Experiment.VoyagerScores);
+				runExperiment(configuration);
+				break;
+			default:
+				configuration.setReadTable(configuration.getInputTable());
+				configuration.setExperiment(Experiment.IndriScores);
+				runExperiment(configuration);
+				break;
+			}
 	}
 
 	private static ExtendQuery getExtendQueryType(Configuration configuration, Long id, String qString) throws Exception {

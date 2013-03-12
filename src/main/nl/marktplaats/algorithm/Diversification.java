@@ -11,70 +11,116 @@ import lemurproject.indri.QueryEnvironment;
 import main.nl.marktplaats.objects.CosineSimilarity;
 import main.nl.marktplaats.objects.Document;
 import main.nl.marktplaats.utils.Configuration;
+import main.nl.marktplaats.utils.MMRMethod;
 import main.nl.marktplaats.utils.SqlCommands;
 
 public class Diversification {
-	private static String db ;
-	private static String table;
-	private static QueryEnvironment env ;
-	private static String mmrTable ;
+	private Configuration configuration ;
 
 	public Diversification(Configuration configuration ) throws Exception
 	{
-		db = configuration.getDb();
-		table = configuration.getReadTable();
-		env = configuration.getQueryEnvRepository();
-		mmrTable =  configuration.getMMRTable();
+		this.configuration = configuration;
 	}
-	
-	public void diversificationSimple() throws Exception
+	public void diversificationNew() throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
-		System.out.println("Reading original results from "+table);
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+" );",db))
+		System.out.println("Reading original results from "+configuration.getReadTable());
+		HashMap<Integer, HashMap<Long,HashMap<Long, Double>>> query_doc1_doc2_sim = new HashMap<Integer,HashMap<Long, HashMap<Long,Double>>>();
+		HashMap<Long, HashMap<Long, Double>> doc1_doc2_sim = new HashMap<Long, HashMap<Long,Double>>();
+		for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+" );",configuration.getDb()))
 		{
-			int count = 0;
-			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where  query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
-			for(int i=0; i<=ids.size()-2;i++)
+			List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where  query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;",configuration.getDb());
+			for(Long id:ids)
 			{
-				HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc2,similarity from cosSim where doc1="+ids.get(i)+";", db);
-				for(int j=i+1;j<=ids.size()-1; j++)
-				{
+				HashMap<Long,Double> doc2_sim = sql.selectHashMapLongDoubbleQuery("select doc2,similarity from cosSim where doc1="+id+";", configuration.getDb());
+				doc1_doc2_sim.put(id, doc2_sim);
+			}
+			query_doc1_doc2_sim.put(query, doc1_doc2_sim);
+			getDiversificationMethod(query, ids, query_doc1_doc2_sim.get(query));
+		}
+	}
+	
+	private void getDiversificationMethod(int query, List<Long> ids, HashMap<Long, HashMap<Long, Double>> doc1_doc2_sim) throws Exception {
+		MMRMethod mmrMethod = configuration.getMmrMethod();
+		switch (mmrMethod) {
+		case simpleMMR:
+			diversificationSimple(query, ids, doc1_doc2_sim);
+			break;
+		case altAllMMR:
+			//alternativeDiversification(query, ids, doc1_doc2_sim);
+			break;
+		case altLastOneMMR:
+			//alternativeDiversification2(query, ids, doc1_doc2_sim);
+			break;
+		case altLastFourMMR:
+			//alternativeDiversificationLast4(query, ids, doc1_doc2_sim);
+			break;
+		case altLastFourTenNextMMR:
+			//alternativeDiversificationLast4With10Next(query, ids, doc1_doc2_sim);
+			break;
+		case altMMRwithFine:
+			//alternativeDiversificationLast4With10NextAndFine(query, ids, doc1_doc2_sim);
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void diversificationSimple(int query, List<Long> ids, HashMap<Long, HashMap<Long, Double>> doc1_doc2_sim) throws Exception
+	{
+		SqlCommands sql = new SqlCommands();
+		int count = 0;
+		for(int i=0; i<=ids.size()-2;i++)
+		{
+			HashMap<Long,Double> doc2_sim = doc1_doc2_sim.get(ids.get(i));
+			HashMap<Long,Double> currentCosSim = new HashMap<Long, Double>();
+			for(int j=i+1;j<=ids.size()-1; j++)
+			{
 				double c_s = 0.0;
-				if(cos_sims.containsKey(ids.get(j)))
+				if(currentCosSim.containsKey(ids.get(j)))
+				{ 
+					c_s = currentCosSim.get(ids.get(j));
+				}
+				else if(doc1_doc2_sim.containsKey(ids.get(j)))
 				{
-				 c_s = cos_sims.get(ids.get(j));
+					c_s = (double) doc2_sim.get(ids.get(j));
+					currentCosSim.put(ids.get(j), c_s);
 				}
 				else
 				{
-					CosineSimilarity cs = new CosineSimilarity(db, ids.get(i), ids.get(j),query, table, env);
-					c_s = cs.calculateCosineSimilarity();
-					cos_sims.put(ids.get(j),c_s);
-					sql.insertQuery("insert into cosSim Values("+ids.get(i)+","+ ids.get(j)+","+cs.getDoc1().getScore()+","+c_s+");",db);
-					
+					calculateCosineSimilarity(ids.get(i), ids.get(j), query);	
+					currentCosSim.put(ids.get(j),c_s);
 				}
-				}
-				Document doc1 = new Document(db,ids.get(i), query, table, env);
-				double maxCosineSimilarity = getMaxCs(cos_sims) ;
-				double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * maxCosineSimilarity;
-				count++;
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(i)+","+mmr+","+count+",'diversificationSimple');",db);
-				
 			}
-		} 
+			Document doc1 = new Document(configuration.getDb(),ids.get(i), query, configuration.getReadTable(), configuration.getQueryEnvRepository());
+			double maxCosineSimilarity = getMaxCs(currentCosSim) ;
+			double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * maxCosineSimilarity;
+			count++;
+			sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(i)+","+mmr+","+count+",'diversificationSimple');",configuration.getDb());
+			
+		}
+}
+
+
+
+	private Double calculateCosineSimilarity(Long doc1, Long doc2, int query) throws Exception {
+		SqlCommands sql = new SqlCommands();
+		CosineSimilarity cs = new CosineSimilarity(configuration.getDb(), doc1, doc2,query, configuration.getReadTable(), configuration.getQueryEnvRepository());
+		Double c_s = cs.calculateCosineSimilarity();
+		sql.insertQuery("insert into cosSim Values("+doc1+","+ doc2+","+cs.getDoc1().getScore()+","+c_s+");",configuration.getDb());
+		return c_s;
 	}
 
-
 	//This technique check the similarity of one add with all the previous results 
-	public void alternativeDiversification() throws Exception
+	public void alternativeDiversification(int query2, List<Long> ids2, HashMap<Long, Double> hashMap) throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+");",configuration.getDb()))
 		{
 			int count = 0;
-			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
-			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";",db);
-			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+","+count+",'alternativeDiversification');",db);
+			List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;",configuration.getDb());
+			double score = sql.selectDoubleQuery("select score from "+configuration.getReadTable()+" where query="+query+" and docs="+ids.get(0)+";",configuration.getDb());
+			sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(0)+","+score+","+count+",'alternativeDiversification');",configuration.getDb());
 			Long alreadyCompared = ids.get(0);
 			ids.remove(0);
 			while(ids.size()>0)
@@ -82,9 +128,9 @@ public class Diversification {
 				HashMap<Long,Double> mmrs = new HashMap<Long,Double>();
 				for(int j=0;j<=ids.size()-1; j++)
 				{
-				CosineSimilarity cs = new CosineSimilarity(db,ids.get(j), alreadyCompared,query, table, env);
+				CosineSimilarity cs = new CosineSimilarity(configuration.getDb(),ids.get(j), alreadyCompared,query, configuration.getReadTable(), configuration.getQueryEnvRepository());
 				double c_s = 0.0;
-				HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc1,similarity from cosSim where doc2="+alreadyCompared+";", db);
+				HashMap<Long,Double> cos_sims = sql.selectHashMapLongDoubbleQuery("select doc1,similarity from cosSim where doc2="+alreadyCompared+";", configuration.getDb());
 				
 				if(cos_sims.containsKey(ids.get(j)))
 				{
@@ -95,16 +141,16 @@ public class Diversification {
 				{
 					c_s = cs.calculateCosineSimilarity();
 					cos_sims.put(ids.get(j),c_s);
-					sql.insertQuery("insert into cosSim Values("+ids.get(j)+","+ alreadyCompared+","+cs.getDoc1().getScore()+","+c_s+");",db);
+					sql.insertQuery("insert into cosSim Values("+ids.get(j)+","+ alreadyCompared+","+cs.getDoc1().getScore()+","+c_s+");",configuration.getDb());
 				}
-					Document doc1 = new Document(db,ids.get(j), query, table, env);
+					Document doc1 = new Document(configuration.getDb(),ids.get(j), query, configuration.getReadTable(), configuration.getQueryEnvRepository());
 					double mmr = 0.3 * doc1.getScore() - (1 - 0.3) * c_s;
 					mmrs.put(ids.get(j), mmr);
 									
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
 					count++;
-					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+count+",'alternativeDiversification');",db);
+					sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+","+count+",'alternativeDiversification');",configuration.getDb());
 					alreadyCompared = maxMMRid;
 					int removableIndex = 0 ;
 					for(int i=0;i<ids.size();i++)
@@ -121,17 +167,17 @@ public class Diversification {
 			}
 	}
 	//This technique check the similarity of one add with all the displayed results 
-	public void alternativeDiversification2() throws Exception
+	public void alternativeDiversification2(int query2, List<Long> ids2, HashMap<Long, Double> hashMap) throws Exception
 	{
 		SqlCommands sql = new SqlCommands();
 		
-		for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
+		for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+");",configuration.getDb()))
 		{
 			int count = 1;
-			List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
+			List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;",configuration.getDb());
 			List<Long> displayedIds = new ArrayList<Long>();
-			double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-			sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversification2');",db);
+			double score = sql.selectDoubleQuery("select score from "+configuration.getReadTable()+" where query="+query+" and docs="+ids.get(0)+";", configuration.getDb());
+			sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversification2');",configuration.getDb());
 			Long alreadyCompared = ids.get(0);
 			displayedIds.add(alreadyCompared);
 			ids.remove(0);
@@ -141,13 +187,13 @@ public class Diversification {
 					HashMap<Long,Double> mmrs = new HashMap<Long,Double>();
 					for(int j=0;j<=ids.size()-1; j++)
 					{
-						Double avgMMR = getAvgMMR(table, query, ids.get(j),displayedIds, env, db);
+						Double avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),displayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 						mmrs.put(ids.get(j), avgMMR);
 									
 					}
 					Long maxMMRid = getMaxMMRId(mmrs) ;
 					count++;
-					sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversification2');",db);
+					sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversification2');",configuration.getDb());
 					alreadyCompared = maxMMRid;
 					displayedIds.add(alreadyCompared);
 					int removableIndex = 0 ;
@@ -166,16 +212,16 @@ public class Diversification {
 	}
 	
 	//This technique check the similarity of one add with previous 4 displayed results 
-		public void alternativeDiversificationLast4() throws Exception
+		public void alternativeDiversificationLast4(int query2, List<Long> ids2, HashMap<Long, Double> hashMap) throws Exception
 		{
 			SqlCommands sql = new SqlCommands();
-			for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
+			for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+");",configuration.getDb()))
 			{
 				int count = 1;
-				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;", db);
+				List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;", configuration.getDb());
 				List<Long> displayedIds = new ArrayList<Long>();
-				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4');",db);
+				double score = sql.selectDoubleQuery("select score from "+configuration.getReadTable()+" where query="+query+" and docs="+ids.get(0)+";", configuration.getDb());
+				sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4');", configuration.getDb());
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -189,17 +235,17 @@ public class Diversification {
 							if(displayedIds.size()>4)
 							{
 								List<Long> last4DisplayedIds = chooseLast4(displayedIds);
-								avgMMR = getAvgMMR(table, query, ids.get(j),last4DisplayedIds, env, db);
+								avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),last4DisplayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 							}
 							else 
-								 avgMMR = getAvgMMR(table, query, ids.get(j),displayedIds, env, db);
+								 avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),displayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 							
 							mmrs.put(ids.get(j), avgMMR);
 										
 						}
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4');",db);
+						sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4');", configuration.getDb());
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;
@@ -219,16 +265,16 @@ public class Diversification {
 
 		
 		//This technique check the similarity of 10 next adds with previous 4 displayed results 
-		public void alternativeDiversificationLast4With10Next() throws Exception
+		public void alternativeDiversificationLast4With10Next(int query2, List<Long> ids2, HashMap<Long, Double> hashMap) throws Exception
 		{
 			SqlCommands sql = new SqlCommands();
-			for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
+			for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+");",configuration.getDb()))
 			{
 				int count = 1;
-				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
+				List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;",configuration.getDb());
 				List<Long> displayedIds = new ArrayList<Long>();
-				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10Next');",db);
+				double score = sql.selectDoubleQuery("select score from "+configuration.getReadTable()+" where query="+query+" and docs="+ids.get(0)+";", configuration.getDb());
+				sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10Next');",configuration.getDb());
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -242,16 +288,16 @@ public class Diversification {
 							if(displayedIds.size()>4)
 							{
 								List<Long> last4DisplayedIds = chooseLast4(displayedIds);
-								avgMMR = getAvgMMR(table, query, ids.get(j),last4DisplayedIds, env, db);
+								avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),last4DisplayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 							}
 							else 
-								 avgMMR = getAvgMMR(table, query, ids.get(j),displayedIds, env, db);
+								 avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),displayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 							
 							mmrs.put(ids.get(j), avgMMR);			
 						}
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10Next');", db);
+						sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10Next');", configuration.getDb());
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;
@@ -271,16 +317,16 @@ public class Diversification {
 
 
 		//This technique check the similarity of 10 next adds with previous 4 displayed results and gives a fine to sequent similar items
-		public void alternativeDiversificationLast4With10NextAndFine() throws Exception
+		public void alternativeDiversificationLast4With10NextAndFine(int query2, List<Long> ids2, HashMap<Long, Double> hashMap) throws Exception
 		{
 			SqlCommands sql = new SqlCommands();
-			for(int query:sql.selectListInt("select distinct(query) from "+table+" where query not in (select distinct(query) from "+mmrTable+");",db))
+			for(int query:sql.selectListInt("select distinct(query) from "+configuration.getReadTable()+" where query not in (select distinct(query) from "+configuration.getMMRTable()+");",configuration.getDb()))
 			{
 				int count = 1;
-				List<Long> ids = sql.selectListLong("select distinct(docs) from "+table+" where query="+query+" and docs not in (select doc from "+mmrTable+" where query="+query+") limit 100;",db);
+				List<Long> ids = sql.selectListLong("select distinct(docs) from "+configuration.getReadTable()+" where query="+query+" and docs not in (select doc from "+configuration.getMMRTable()+" where query="+query+") limit 100;", configuration.getDb());
 				List<Long> displayedIds = new ArrayList<Long>();
-				double score = sql.selectDoubleQuery("select score from "+table+" where query="+query+" and docs="+ids.get(0)+";", db);
-				sql.insertQuery("insert into "+mmrTable+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10NextAndFine');",db);
+				double score = sql.selectDoubleQuery("select score from "+configuration.getReadTable()+" where query="+query+" and docs="+ids.get(0)+";", configuration.getDb());
+				sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+ids.get(0)+","+score+",1,'alternativeDiversificationLast4With10NextAndFine');",configuration.getDb());
 				Long alreadyCompared = ids.get(0);
 				displayedIds.add(alreadyCompared);
 				ids.remove(0);
@@ -295,11 +341,11 @@ public class Diversification {
 							if(displayedIds.size()>4)
 							{
 								List<Long> last4DisplayedIds = chooseLast4(displayedIds);
-								avgMMR = getAvgMMR(table, query, ids.get(j),last4DisplayedIds, env, db);
+								avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),last4DisplayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 							}
 							else 
 								if(ids.size()>=10)
-								{ avgMMR = getAvgMMR(table, query, ids.get(j),displayedIds, env, db);
+								{ avgMMR = getAvgMMR(configuration.getReadTable(), query, ids.get(j),displayedIds, configuration.getQueryEnvRepository(), configuration.getDb());
 
 								mmrs.put(ids.get(j), avgMMR);		
 								}
@@ -307,7 +353,7 @@ public class Diversification {
 						
 						Long maxMMRid = getMaxMMRId(mmrs) ;
 						count++;
-						sql.insertQuery("insert into "+mmrTable+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10NextAndFine');",db);
+						sql.insertQuery("insert into "+configuration.getMMRTable()+" Values("+query+","+maxMMRid+","+mmrs.get(maxMMRid)+", "+count+",'alternativeDiversificationLast4With10NextAndFine');",configuration.getDb());
 						alreadyCompared = maxMMRid;
 						displayedIds.add(alreadyCompared);
 						int removableIndex = 0 ;
