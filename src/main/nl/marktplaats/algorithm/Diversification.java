@@ -81,7 +81,7 @@ public class Diversification {
 				{ 
 					c_s = currentCosSim.get(ids.get(j));
 				}
-				else if(doc1_doc2_sim.containsKey(ids.get(j)))
+				else if(doc2_sim.containsKey(ids.get(j)))
 				{
 					c_s = (double) doc2_sim.get(ids.get(j));
 					currentCosSim.put(ids.get(j), c_s);

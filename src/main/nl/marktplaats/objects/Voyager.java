@@ -441,7 +441,7 @@ public class Voyager {
 			SqlCommands sql = new SqlCommands();
 			StringManipulation stringMan = new StringManipulation();
 			System.out.println("Reading queries of table "+configuration.getReadTable());
-			for(Entry<Long,String> queryEntry:sql.selectHashMapLongStringQuery("select doc,query from "+configuration.getReadTable()+" where experiment="+configuration.getSystem()+";", configuration.getDb()).entrySet())
+			for(Entry<Long,String> queryEntry:sql.selectHashMapLongStringQuery("select doc,query from "+configuration.getReadTable()+" ;", configuration.getDb()).entrySet())
 			{
 				String newQuery = stringMan.getStringSeparatedByCommas(queryEntry.getValue());
 				String request = getVoyagerRequest(newQuery);

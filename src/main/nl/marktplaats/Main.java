@@ -33,7 +33,7 @@ public class Main {
 		String pathToDisk = "/media/Data/Coen/";
 		configuration.setLocalPathToExternalDisk(pathToDisk);
 		configuration.setDB("algorithms");
-		configuration.setExperiment(Experiment.Aob);
+		configuration.setExperiment(Experiment.Diversification);
 		configuration.setParameterFilesDirectory(pathToDisk+"ParameterFiles/tests");
 		configuration.setReadQueriesFromSGML(false);
 		configuration.setSGMLFolder(pathToDisk+"sgml/DataSet/tests");
@@ -41,9 +41,9 @@ public class Main {
 		configuration.setIndriPath("/home/varvara/workspace/tools/indri-5.4/");
 		configuration.setIndriResultsFolder(pathToDisk +"Results/Indri");
 		configuration.setIndriScoresInputTable("indriScores");
-		configuration.setReadTable("queries");
+		configuration.setReadTable("voyScores");
 		configuration.setQueryEnvRepository(pathToDisk+"repositories/repositoriesL1/");
-		configuration.setSearchEngine(SearchEngine.Voyager);
+		configuration.setSearchEngine(SearchEngine.IndriOkapi);
 		configuration.setStatisticsTable("statistics");
 		configuration.setVoyagerQueriesTable("voyRequests");
 		configuration.setTrecInputFolder("/src/resources/trecResults/tests/test");
@@ -52,14 +52,10 @@ public class Main {
 		configuration.setIndexField(IndexedField.Description);
 		configuration.setVoyagerRequest("http://10.249.123.123:4242/query?Qy=");
 		configuration.setPostFixVoyagerRequest("&Fl=AD_ID&Rk=1&Nr=1000&Sk=0&Hx=no");
-		configuration.setInputTable("extendedQueries");
+		configuration.setInputTable("queries");
 		configuration.setAobMethod(AobMethod.llrL2);
 		configuration.setMMRTable("MMR");
 		configuration.setMmrMethod(MMRMethod.simpleMMR);
-		
-		
-
-		
 		return configuration;
 	}	
 	
@@ -100,12 +96,49 @@ public class Main {
 			if(checkIndri)
 				indriExperiments(configuration);
 			break;
+		case SimilarItems:
+			boolean checkSimilarItems = configuration.checkSimilarItemsConfiguration();
+			if(checkSimilarItems)
+				similarItemsExperiment(configuration);
+			break;
 		default:
 			System.out.println("Please provide valid experiment");
 			break;
 		}
 		
 	}
+	private static void similarItemsExperiment(Configuration configuration) throws Exception {
+		switch (configuration.getSearchEngine()) {
+		case Voyager:
+			System.out.println("VOYYYYYYYYYY");
+			break;
+		case IndriOkapi:
+			System.out.println("INDRIII");
+			break;
+		}
+		Indri indri = new Indri(configuration);
+		HashMap<String,String> queries = new HashMap<String, String>();
+		if(configuration.isReadQueriesFromSGML())
+			queries = indri.createQueryFromSGMLIndriQueryLanguage();
+		else
+			queries = indri.createQueryFromTableIndriQueryLanguage();
+		SqlCommands sql = new SqlCommands();
+		sql.insertQueries(queries, configuration.getInputTable(), configuration.getDb(),configuration.getSystem());
+		
+		switch (configuration.getSearchEngine()) {
+		case Voyager:
+			configuration.setReadTable(configuration.getInputTable());
+			configuration.setExperiment(Experiment.VoyagerScores);
+			runExperiment(configuration);
+			break;
+		default:
+			configuration.setReadTable(configuration.getInputTable());
+			configuration.setExperiment(Experiment.IndriScores);
+			runExperiment(configuration);
+			break;
+		}
+	}
+
 	private static void indriExperiments(Configuration configuration) throws IOException {
 		
 		Indri indri = new Indri(configuration);

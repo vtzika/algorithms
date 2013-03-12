@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class SqlCommands {
 
@@ -400,6 +401,15 @@ public class SqlCommands {
 			ex.printStackTrace();
 		}
 		return vipsQueries;
+	}
+
+	public void insertQueries(HashMap<String, String> queries,
+			String inputTable, String db, String string) {
+		for(Entry<String,String> query:queries.entrySet())
+		{
+			insertQuery("insert into "+inputTable+" values ("+query.getKey()+",'"+query.getValue()+"',"+string+")", db);
+		}
+		
 	}
 
 }

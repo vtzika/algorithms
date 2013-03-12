@@ -19,10 +19,8 @@ public class Statistics {
 			String db = configuration.getDb();
 			String table = configuration.getResultsTable();
 			String experiment = configuration.getSystem();
-			System.out.println(table);
 			for(int query:sql.selectListInt("select distinct(query) from "+table+" where experiment="+experiment+" ;",db))
-			{			
-				System.out.println(query);
+			{	
 				double top5 =getTopXresults(table, 5, query, db, "CTR");
 				double top10 =getTopXresults(table, 10, query, db, "CTR");
 				double top20 =getTopXresults(table, 20, query, db, "CTR");
