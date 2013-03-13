@@ -329,13 +329,7 @@ public class Configuration {
 	private boolean checkIfSearchEngineeIsNull(String fieldsName, SearchEngine fieldsValue) {
 		if(fieldsValue==null)
 		return false;
-		else if(fieldsValue.equals(SearchEngine.Voyager))
-		{
-			System.out.println("Search Enginee changed to IndriTfidf");
-			this.searchEngine = SearchEngine.IndriTfidf;
-			return true;
-		}
-		else return true;
+		else  return true;
 	}
 
 	private boolean checkIfItIsNumber(String fieldsName, int fieldsValue) {
@@ -592,5 +586,19 @@ public class Configuration {
 			c = true;
 		
 		return (a && b && c);
+	}
+
+	public boolean checkSimilarItemsConfiguration() {
+		boolean b = false;
+		if (isReadQueriesFromSGML())
+			b = checkIfHasStringValue("SGMLFolder : "+this.VIPFolder+" ", this.VIPFolder);
+		else
+			b = checkIfHasStringValue("ReadTable : "+this.readTable+" ", this.readTable);
+		boolean c = checkIfItIsNumber("Query Choice : "+this.queryChoice+" ", this.queryChoice);
+		boolean d = checkIfSearchEngineeIsNull("SearchEnginee : "+this.searchEngine+" ", this.searchEngine);
+		if ( b && c && d)
+			return true;
+		else
+			return false;
 	}
 }
